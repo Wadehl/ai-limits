@@ -1,0 +1,74 @@
+name: AiLimits
+options:
+  bundleIdPrefix: com.kevinkwok
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+packages:
+  AiLimitsPackage:
+    path: .
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: 52BF5GV693
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_HARDENED_RUNTIME: YES
+
+targets:
+  AiLimits:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/AiLimitsApp
+      - path: Resources
+        buildPhase: resources
+    dependencies:
+      - package: AiLimitsPackage
+        product: AiLimitsCore
+      - package: AiLimitsPackage
+        product: AiLimitsUI
+      - target: AiLimitsWidgetExtension
+        embed: true
+        codeSign: true
+    info:
+      path: Build/AiLimits-Info.plist
+      properties:
+        CFBundleDisplayName: Agent 额度
+        LSMinimumSystemVersion: "14.0"
+        LSUIElement: true
+        NSHumanReadableCopyright: Nunito 字体按 SIL Open Font License 1.1 使用
+    entitlements:
+      path: Build/AiLimits.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - 52BF5GV693.group.com.kevinkwok.ailimits
+
+  AiLimitsWidgetExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Sources/AiLimitsWidget
+      - path: Resources
+        buildPhase: resources
+    dependencies:
+      - package: AiLimitsPackage
+        product: AiLimitsCore
+      - package: AiLimitsPackage
+        product: AiLimitsUI
+    info:
+      path: Build/AiLimitsWidget-Info.plist
+      properties:
+        CFBundleDisplayName: Agent 额度
+        LSMinimumSystemVersion: "14.0"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Build/AiLimitsWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - 52BF5GV693.group.com.kevinkwok.ailimits
