@@ -1,4 +1,4 @@
-# AiLimits（狸记额度 / Linook）
+# Linook（狸记额度）
 
 macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度剩余。
 
