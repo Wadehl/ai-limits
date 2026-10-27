@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Test
+        run: swift test
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Build app (ad-hoc signed)
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: ./scripts/build-release.sh
+
+      - name: Check widget extension registers
+        run: ./scripts/check-widget-registration.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AiLimits-macOS-build-${{ github.run_number }}
+          path: |
+            dist/*.zip
+            dist/*.dmg
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
