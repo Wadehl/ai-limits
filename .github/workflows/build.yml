@@ -40,7 +40,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: AiLimits-macOS-build-${{ github.run_number }}
+          name: Linook-macOS-build-${{ github.run_number }}
           path: |
             dist/*.zip
             dist/*.dmg

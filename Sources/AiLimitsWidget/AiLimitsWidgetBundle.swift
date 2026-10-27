@@ -20,7 +20,7 @@ struct AiLimitsWidget: Widget {
             AiLimitsWidgetView(entry: entry)
         }
         .configurationDisplayName("Agent 额度")
-        .description("查看本机 Claude、Codex、Cursor、Grok 的额度剩余")
+        .description("狸记额度：查看本机 Claude、Codex、Cursor、Grok 的额度剩余")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
     }

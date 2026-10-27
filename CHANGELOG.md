@@ -1,6 +1,6 @@
 # 更新日志
 
-本文件记录 AiLimits 每个版本的变化，格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
+本文件记录狸记额度（Linook，旧名 AiLimits）每个版本的变化，格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
 ## [未发布]
 
@@ -12,6 +12,8 @@
 
 ### 变更
 
+- 产品改名为「狸记额度」（英文名 Linook）：应用包改为 `Linook.app`，系统里显示为「狸记额度」，发布包改为 `Linook-<版本>-macOS.dmg/.zip`，dmg 卷名为 Linook。小组件名称「Agent 额度」不变。
+- 为了兼容已安装的版本与小组件登记，bundle id（`com.kevinkwok.AiLimits*`）、应用组标识与快照目录 `~/Library/Application Support/AiLimits/` 保持不变。从 AiLimits 升级时，需要先删掉旧的 `AiLimits.app`。
 - 小组件的共享位置可在构建时选择：默认仍走应用组；临时签名构建改用 `~/Library/Application Support/AiLimits/`，因为 macOS 15 起临时签名的小组件扩展无法访问应用组。
 - 应用组标识按 `DEVELOPMENT_TEAM` 自动生成，`build-app.sh` 支持用环境变量换成自己的团队编号。
 

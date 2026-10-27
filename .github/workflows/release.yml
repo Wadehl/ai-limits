@@ -48,7 +48,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: AiLimits-macOS
+          name: Linook-macOS
           path: |
             dist/*.zip
             dist/*.dmg
@@ -65,5 +65,5 @@ jobs:
             dist/SHA256SUMS.txt
           generate_release_notes: true
           body: |
-            临时签名（ad-hoc）构建，未经过 Apple 公证。首次打开与桌面小组件的设置步骤见 README 的「安装」与「桌面小组件」两节。
+            狸记额度（Linook）临时签名（ad-hoc）构建，未经过 Apple 公证。从 AiLimits 升级的话，先删掉「应用程序」里旧的 AiLimits.app。首次打开与桌面小组件的设置步骤见 README 的「安装」与「桌面小组件」两节。
             Ad-hoc signed, not notarized. See the Install and Desktop Widgets sections of the README.
