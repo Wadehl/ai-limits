@@ -1,4 +1,4 @@
-# AiLimits
+# AiLimits（狸记额度 / Linook）
 
 macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度剩余。
 
@@ -55,6 +55,78 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
 
 任何一个账号取不到数据只会影响它自己的那张卡片，其余账号照常显示。
 
+## 安装
+
+本项目没有付费的 Apple 开发者账号，发布包只做了临时签名（ad-hoc），没有 Developer ID 签名，也没有经过 Apple 公证，所以首次打开要手动放行。
+
+1. 在 [Releases](https://github.com/Wadehl/linook/releases) 下载 `AiLimits-<版本>-macOS.dmg`（或 `.zip`），把 `AiLimits.app` 拖进「应用程序」。可以用同一页的 `SHA256SUMS.txt` 核对文件。
+2. 去掉下载隔离标记。必须带 `-r`，否则里面的小组件扩展仍然被隔离，小组件不会出现：
+
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/AiLimits.app
+   ```
+
+   不想用终端的话：双击打开，被拦下后到「系统设置 → 隐私与安全性」，在页面下方点「仍要打开」，再输入密码确认。macOS 14 也可以在 Finder 里右键 → 打开；macOS 15 起右键打开不再能绕过，只能用「仍要打开」或者上面的命令。
+3. 打开 `AiLimits.app`。它只在菜单栏显示图标，没有程序坞图标。
+
+每次升级覆盖安装之后，都要再执行一次第 2 步。
+
+## 桌面小组件
+
+发布包里的小组件与应用之间不经过应用组共享数据：应用把快照写到 `~/Library/Application Support/AiLimits/snapshot.json`，小组件扩展凭沙盒的只读例外读取这个目录。macOS 15 起系统按开发者团队编号校验应用组，临时签名的小组件扩展访问应用组会被直接拒绝，所以发布包改用这个位置。
+
+1. 完成上面的安装，确认已经去掉隔离标记。
+2. 打开应用，点开菜单栏面板，等第一次刷新完成。之后应当能看到快照文件：
+
+   ```bash
+   ls -l ~/Library/Application\ Support/AiLimits/snapshot.json
+   ```
+
+3. 向系统登记小组件扩展，并确认登记成功（输出里有 `com.kevinkwok.AiLimitsWidgetExtension`，并且行首不是表示被忽略的 `-`）：
+
+   ```bash
+   pluginkit -a /Applications/AiLimits.app/Contents/PlugIns/AiLimitsWidgetExtension.appex
+   pluginkit -e use -i com.kevinkwok.AiLimitsWidgetExtension
+   pluginkit -m -v -i com.kevinkwok.AiLimitsWidgetExtension
+   ```
+
+4. 让小组件服务重新读取：
+
+   ```bash
+   killall chronod NotificationCenter 2>/dev/null || true
+   ```
+
+5. 在桌面空白处右键 →「编辑小组件」，搜索「Agent 额度」，选尺寸后拖到桌面。
+
+排查：
+
+- 小组件列表里找不到：多半是扩展还带着隔离标记，或者系统登记了多份。用 `pluginkit -m -D -v -i com.kevinkwok.AiLimitsWidgetExtension` 列出全部登记位置，只应该剩 `/Applications` 下的那一份；其余路径（例如 Xcode 的 DerivedData）删掉对应的 `.app`，然后重做第 3、4 步。仍然不行就注销重新登录或重启一次。
+- 小组件显示没有数据：确认第 2 步的快照文件存在并且在更新。
+- 升级之后小组件空白或不再刷新：从桌面移除旧的小组件，重做第 2 到 5 步后重新添加。
+- 临时签名的小组件扩展能否在桌面加载，Apple 没有正式承诺。如果在你的系统版本上始终不出现，请用下面的「从源码构建」。
+
+### 从源码构建
+
+在自己的 Mac 上构建，不会带下载隔离标记，小组件也最稳定。需要 Xcode 与 xcodegen（`brew install xcodegen`）。
+
+- 不需要任何 Apple 账号：
+
+  ```bash
+  ./scripts/build-release.sh
+  ditto dist/AiLimits.app /Applications/AiLimits.app
+  open /Applications/AiLimits.app
+  ```
+
+  产物与发布包相同（临时签名，小组件走 `~/Library/Application Support/AiLimits/`），然后按上面「桌面小组件」的第 2 到 5 步操作。
+
+- 用自己的团队编号签名，小组件改走应用组。免费的 Apple ID 也可以：在 Xcode →「设置 → 账户」登录 Apple ID，会得到一个 Personal Team，团队编号可以在钥匙串里 `Apple Development` 证书的「组织单位」一栏看到。然后：
+
+  ```bash
+  DEVELOPMENT_TEAM=你的团队编号 ./scripts/build-app.sh
+  ```
+
+  应用组标识会按团队编号自动生成为 `<团队编号>.group.com.kevinkwok.ailimits`。免费账号签出的应用只能在本机使用，证书过期后需要重新构建。这条路线还没有在免费账号上实测过，遇到签名报错时改用上面不需要账号的方式。
+
 ## 构建
 
 需要 macOS 14 以上、带 Swift 6 工具链的 Xcode，以及 xcodegen。
@@ -66,7 +138,21 @@ brew install xcodegen
 
 脚本会生成 `AiLimits.xcodeproj`、构建 Release、把产物安装到 `/Applications/AiLimits.app`，并向 LaunchServices 注册小组件扩展。
 
-签名使用的是 `project.yml` 里的 `DEVELOPMENT_TEAM`，应用组的标识在 `project.yml` 与 `Sources/AiLimitsCore/SnapshotStore.swift` 两处。macOS 要求应用组的标识前面带上开发者团队编号，换成你自己的团队编号之后才能构建，这三处的值要保持一致。
+签名使用的是 `project.yml` 里的 `DEVELOPMENT_TEAM`，也可以用环境变量 `DEVELOPMENT_TEAM` 覆盖。macOS 要求应用组的标识前面带上开发者团队编号，应用组标识由 `project.yml` 的 `AILIMITS_APP_GROUP` 按团队编号生成，并写进应用与小组件的 Info.plist，`SnapshotStore` 从那里读取。
+
+小组件读取快照的位置由构建设置 `AILIMITS_SHARED_STORAGE` 决定：默认 `appGroup` 走应用组共享目录；`scripts/build-release.sh` 与 CI 用 `local`，走 `~/Library/Application Support/AiLimits/`，并去掉应用组权限。
+
+## 自动构建与发布
+
+- `.github/workflows/build.yml`：每个 PR 与 main 分支的推送都会跑 `swift test`，再用 `scripts/build-release.sh` 做一次临时签名构建，检查小组件扩展能否被系统登记，安装包作为构建产物保留 14 天。
+- `.github/workflows/release.yml`：推送 `v*` 标签时构建通用二进制（Apple 芯片与 Intel），生成 `.zip`、`.dmg` 与 `SHA256SUMS.txt`，并发布到 GitHub Releases；版本号取自标签。也可以在 Actions 页面手动运行，手动运行只上传构建产物，不发布。
+
+发布新版本：
+
+```bash
+git tag v0.2.1
+git push origin v0.2.1
+```
 
 应用本身不开启沙盒，因为它需要读取 `~/.claude`、`~/.codex`、`~/.cursor`、`~/.grok` 这些目录；小组件扩展按照系统要求开启了沙盒，只通过应用组共享目录拿到数据。
 
@@ -99,6 +185,7 @@ swift test
 
 - 额度信息的获取方式参考 [orca](https://github.com/stablyai/orca)
 - 界面设计取自 [animal-island-ui-style](https://github.com/guokaigdg/animal-island-ui-style)
+- 界面风格参考 [animal-island-ui](https://github.com/guokaigdg/animal-island-ui)（MIT License）
 - 界面字体是 [Nunito](https://fonts.google.com/specimen/Nunito)，按 SIL Open Font License 1.1 使用，许可证见 `Resources/Nunito-OFL.txt`
 
 ## 许可证

@@ -2,6 +2,19 @@
 
 本文件记录 AiLimits 每个版本的变化，格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### 新增
+
+- GitHub Actions：PR 与 main 分支自动测试并做临时签名构建；推送 `v*` 标签时生成 `.zip`、`.dmg` 并发布到 GitHub Releases。
+- `scripts/build-release.sh`：不需要 Apple 开发者账号的临时签名构建，产物放到 `dist/`。
+- README 增加安装、首次打开放行与桌面小组件的设置步骤。
+
+### 变更
+
+- 小组件的共享位置可在构建时选择：默认仍走应用组；临时签名构建改用 `~/Library/Application Support/AiLimits/`，因为 macOS 15 起临时签名的小组件扩展无法访问应用组。
+- 应用组标识按 `DEVELOPMENT_TEAM` 自动生成，`build-app.sh` 支持用环境变量换成自己的团队编号。
+
 ## [0.2.0] - 2026-10-27
 
 ### 新增

@@ -17,6 +17,9 @@ settings:
     MARKETING_VERSION: "0.2.0"
     CURRENT_PROJECT_VERSION: "2"
     ENABLE_HARDENED_RUNTIME: YES
+    # 桌面小组件读取快照的位置：appGroup 需要真实团队编号签名；local 给临时签名（ad-hoc）构建使用，见 README
+    AILIMITS_SHARED_STORAGE: appGroup
+    AILIMITS_APP_GROUP: $(DEVELOPMENT_TEAM).group.com.kevinkwok.ailimits
 
 targets:
   AiLimits:
@@ -43,11 +46,13 @@ targets:
         LSMinimumSystemVersion: "14.0"
         LSUIElement: true
         NSHumanReadableCopyright: Nunito 字体按 SIL Open Font License 1.1 使用
+        AiLimitsSharedStorage: "$(AILIMITS_SHARED_STORAGE)"
+        AiLimitsAppGroup: "$(AILIMITS_APP_GROUP)"
     entitlements:
       path: Build/AiLimits.entitlements
       properties:
         com.apple.security.application-groups:
-          - 52BF5GV693.group.com.kevinkwok.ailimits
+          - $(AILIMITS_APP_GROUP)
 
   AiLimitsWidgetExtension:
     type: app-extension
@@ -70,9 +75,14 @@ targets:
         LSMinimumSystemVersion: "14.0"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        AiLimitsSharedStorage: "$(AILIMITS_SHARED_STORAGE)"
+        AiLimitsAppGroup: "$(AILIMITS_APP_GROUP)"
     entitlements:
       path: Build/AiLimitsWidget.entitlements
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.application-groups:
-          - 52BF5GV693.group.com.kevinkwok.ailimits
+          - $(AILIMITS_APP_GROUP)
+        # local 模式下快照在 ~/Library/Application Support/AiLimits/，与 SnapshotStore.localRelativePath 一致
+        com.apple.security.temporary-exception.files.home-relative-path.read-only:
+          - /Library/Application Support/AiLimits/
