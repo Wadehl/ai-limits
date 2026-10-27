@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=1080" />
-<title>Agent 额度 · 宣传动画</title>
+<title>AiLimits · 宣传动画</title>
 <style>
   @font-face {
     font-family: "Nunito";
@@ -13,17 +13,15 @@
   }
 
   :root {
-    --cream: #F8F8F0;
-    --paper: #FFFDF4;
+    --bg: #F8F8F0;
+    --paper: #F7F3DF;
     --ink: #794F27;
     --body: #725D42;
     --muted: #8A7B66;
     --teal: #19C8B9;
     --teal-dark: #11A89B;
-    --yellow: #F5C31C;
-    --red: #E05A5A;
-    --border: #C9BA9C;
-    --soft: #E7DDC4;
+    --border: #C4B89E;
+    --soft: #DCD8D1;
     --font: "Nunito", "PingFang SC", "Hiragino Sans GB", "Heiti SC", sans-serif;
   }
 
@@ -33,7 +31,7 @@
     width: 1080px;
     height: 1440px;
     overflow: hidden;
-    background: #BEEAF5;
+    background: var(--bg);
   }
 
   body { font-family: var(--font); color: var(--ink); }
@@ -46,780 +44,680 @@
     isolation: isolate;
   }
 
-  .sky {
+  .grid {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, #BEEAF5 0%, #DFF5EC 46%, #FBF4DE 100%);
+    inset: -60px;
+    background-image: radial-gradient(circle, rgba(121, 79, 39, .13) 1.3px, rgba(121, 79, 39, 0) 1.5px);
+    background-size: 54px 54px;
+    opacity: .5;
   }
 
-  .sun {
+  .chrome {
     position: absolute;
-    left: 800px;
-    top: 70px;
-    width: 240px;
-    height: 240px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #FFF4C4 0%, #FFE79A 52%, rgba(255, 231, 154, 0) 72%);
-  }
-
-  .cloud {
-    position: absolute;
-    width: 160px;
-    height: 66px;
-    background: #fff;
-    border-radius: 999px;
-    opacity: .92;
-  }
-
-  .cloud::before, .cloud::after {
-    content: "";
-    position: absolute;
-    background: #fff;
-    border-radius: 50%;
-  }
-
-  .cloud::before { width: 92px; height: 92px; left: 14px; top: -40px; }
-  .cloud::after { width: 112px; height: 112px; right: -2px; top: -56px; opacity: .96; }
-
-  .c1 { left: 80px; top: 250px; }
-  .c2 { left: 470px; top: 130px; transform: scale(.64); opacity: .8; }
-  .c3 { right: 50px; top: 360px; transform: scale(1.08); opacity: .78; }
-  .c4 { right: 290px; top: 60px; transform: scale(.5); opacity: .7; }
-
-  .hill {
-    position: absolute;
-    border-radius: 50%;
-  }
-
-  .hill-back { width: 1500px; height: 700px; left: -300px; top: 950px; background: #CFE9C4; }
-  .hill-front { width: 1000px; height: 520px; right: -230px; top: 1040px; background: #B9DFB4; }
-
-  .sea {
-    position: absolute;
-    left: -10%;
-    width: 120%;
-    border-radius: 50% 50% 0 0 / 110px 110px 0 0;
-  }
-
-  .sea-back { top: 1075px; height: 370px; background: #BDEBF1; }
-  .sea-front { top: 1130px; height: 320px; background: #95DAE8; }
-
-  .sand {
-    position: absolute;
-    left: 50%;
-    bottom: -110px;
-    width: 1320px;
-    height: 380px;
-    transform: translateX(-50%);
-    background: #F4E1B0;
-    border-radius: 50%;
-    box-shadow: inset 0 16px 0 #FAEECB;
-  }
-
-  .sand::before {
-    content: "";
-    position: absolute;
-    inset: 40px 120px 120px;
-    background-image: radial-gradient(circle, #E6CE94 6px, rgba(230, 206, 148, 0) 7px);
-    background-size: 150px 130px;
-    opacity: .7;
-  }
-
-  .palm {
-    position: absolute;
-    left: 30px;
-    top: 700px;
-    width: 350px;
-    height: 480px;
-    transform-origin: 50% 95%;
-  }
-
-  .mascot {
-    position: absolute;
-    left: 730px;
-    top: 650px;
-    width: 300px;
-    height: 300px;
-    z-index: 4;
-    transform-origin: 50% 100%;
-  }
-
-  .scene { position: absolute; inset: 0; }
-
-  .title-scene {
-    z-index: 5;
+    left: 90px;
+    right: 90px;
+    top: 52px;
     display: flex;
-    justify-content: center;
-    padding-top: 245px;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    z-index: 3;
   }
 
-  .sign {
-    position: relative;
-    width: 910px;
-    height: 415px;
-    padding: 38px 56px 34px;
-    text-align: center;
-    background: #FFF7DF;
-    border: 7px solid #C9A46A;
-    border-radius: 46px;
-    box-shadow: 0 18px 0 rgba(121, 79, 39, .18), 0 38px 70px rgba(121, 79, 39, .14);
-  }
-
-  .sign::before {
-    content: "";
-    position: absolute;
-    inset: 13px;
-    border: 3px dashed #E6D2A5;
-    border-radius: 34px;
-    pointer-events: none;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 7px 22px;
-    border-radius: 999px;
-    background: var(--teal);
-    color: #fff;
-    font-size: 25px;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 23px;
     font-weight: 900;
     letter-spacing: 3px;
-    box-shadow: 0 6px 0 var(--teal-dark);
+    color: var(--ink);
   }
 
-  .sign h1 {
-    margin-top: 14px;
-    font-size: 86px;
+  .brand-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 5px;
+    background: var(--teal);
+  }
+
+  .chrome-step {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chrome-rule {
+    position: absolute;
+    left: 90px;
+    right: 90px;
+    top: 106px;
+    height: 1px;
+    background: rgba(121, 79, 39, .18);
+    z-index: 3;
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+  }
+
+  .title-block {
+    position: absolute;
+    left: 90px;
+    top: 370px;
+    width: 900px;
+  }
+
+  .kicker {
+    width: 900px;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 7px;
+    color: var(--teal-dark);
+  }
+
+  .title-title {
+    margin-top: 22px;
+    width: 900px;
+    font-size: 112px;
     line-height: 1.35;
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: var(--ink);
-    text-shadow: 0 5px 0 #EBD9B0;
-    white-space: nowrap;
   }
 
-  .sign p {
-    margin-top: 6px;
-    font-size: 29px;
-    font-weight: 800;
+  .title-sub {
+    margin-top: 30px;
+    width: 820px;
+    font-size: 31px;
+    line-height: 1.65;
+    font-weight: 700;
+    color: var(--body);
+  }
+
+  .title-rule {
+    margin-top: 36px;
+    width: 140px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--teal);
+    transform-origin: left center;
+  }
+
+  .title-meta {
+    margin-top: 24px;
+    width: 900px;
+    font-size: 24px;
+    font-weight: 700;
     letter-spacing: 1px;
     color: var(--muted);
   }
 
-  .cta {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 11px 30px;
-    border: 4px solid var(--teal);
-    border-radius: 999px;
-    background: var(--paper);
-    color: var(--teal-dark);
-    font-size: 25px;
-    font-weight: 900;
-    box-shadow: 0 7px 0 rgba(17, 168, 155, .26);
-  }
-
-  .panel-scene { z-index: 6; opacity: 0; }
-
-  .menubar {
+  .title-foot {
     position: absolute;
-    left: 50%;
-    top: 72px;
+    left: 90px;
+    top: 1112px;
+    width: 900px;
+    padding-top: 26px;
+    border-top: 1px solid rgba(121, 79, 39, .18);
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 28px;
-    background: rgba(255, 255, 255, .94);
-    border: 3px solid #D9CDB4;
-    border-radius: 999px;
-    box-shadow: 0 8px 0 rgba(93, 74, 48, .12);
-    white-space: nowrap;
-  }
-
-  .menubar b { font-size: 30px; font-weight: 900; letter-spacing: 1px; }
-
-  .gauge { width: 46px; height: 46px; }
-
-  .panel {
-    position: absolute;
-    left: 50%;
-    top: 185px;
-    width: 800px;
-    padding: 26px 30px 30px;
-    background: var(--cream);
-    border: 4px solid var(--border);
-    border-radius: 40px;
-    box-shadow: 0 16px 0 rgba(93, 74, 48, .1), 0 44px 90px rgba(93, 74, 48, .18);
-  }
-
-  .panel-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 8px;
-    margin-bottom: 14px;
-  }
-
-  .ribbon {
-    padding: 9px 24px;
-    border-radius: 14px 14px 14px 4px;
-    background: var(--teal);
-    color: #fff;
+    gap: 22px;
     font-size: 27px;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: 2px;
-    box-shadow: 0 5px 0 var(--teal-dark);
+    color: var(--body);
   }
 
-  .updated { font-size: 19px; font-weight: 700; color: var(--muted); }
-
-  .card {
-    padding: 14px 22px 16px;
-    margin-top: 13px;
-    background: var(--paper);
-    border: 3px solid var(--soft);
-    border-radius: 26px;
-    box-shadow: 0 6px 0 rgba(93, 74, 48, .06);
-  }
-
-  .card-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .avatar {
-    display: grid;
-    place-items: center;
-    width: 42px;
-    height: 42px;
+  .title-foot .pill {
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
-    color: #fff;
+    background: var(--border);
+  }
+
+  .chapter-head {
+    position: absolute;
+    left: 90px;
+    top: 152px;
+    width: 900px;
+  }
+
+  .chapter-kicker {
+    width: 900px;
     font-size: 22px;
     font-weight: 900;
-    border: 3px solid rgba(121, 79, 39, .16);
-  }
-
-  .avatar.claude { background: #D97757; }
-  .avatar.codex { background: #22B8A8; }
-  .avatar.cursor { background: #7C6CF0; }
-  .avatar.grok { background: #5B6B7A; }
-
-  .name { font-size: 27px; font-weight: 900; }
-  .plan {
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: #EFE8D4;
-    color: var(--body);
-    font-size: 16px;
-    font-weight: 800;
-  }
-
-  .row {
-    display: grid;
-    grid-template-columns: 158px 1fr 172px;
-    align-items: center;
-    gap: 16px;
-    padding: 5px 8px;
-    margin: 0 -8px;
-    border-radius: 13px;
-    transform-origin: center;
-  }
-
-  .label { font-size: 19px; font-weight: 700; color: var(--muted); white-space: nowrap; }
-
-  .track {
-    height: 16px;
-    border-radius: 999px;
-    background: #EBE4D0;
-    box-shadow: inset 0 2px 0 rgba(121, 79, 39, .08);
-    overflow: hidden;
-  }
-
-  .fill {
-    height: 100%;
-    width: 0;
-    border-radius: 999px;
-    background: var(--teal);
-    box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .09);
-  }
-
-  .pct {
-    font-size: 19px;
-    font-weight: 900;
-    text-align: right;
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  .caption {
-    position: absolute;
-    left: 50%;
-    bottom: 316px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 13px 34px;
-    background: rgba(255, 253, 244, .97);
-    border: 3px solid #D8CAAF;
-    border-radius: 28px;
-    box-shadow: 0 9px 0 rgba(93, 74, 48, .12);
-    white-space: nowrap;
-    opacity: 0;
-    transform: translateX(-50%);
-  }
-
-  .caption b { font-size: 29px; font-weight: 900; }
-  .caption span { font-size: 19px; font-weight: 700; color: var(--muted); }
-
-  .widget-scene { z-index: 7; opacity: 0; }
-
-  .desktop {
-    position: absolute;
-    left: 110px;
-    top: 300px;
-    width: 860px;
-    height: 620px;
-    border: 4px solid var(--border);
-    border-radius: 46px;
-    background: linear-gradient(155deg, #BFE6F2 0%, #DDF1D6 62%, #F8EFD2 100%);
-    box-shadow: 0 22px 0 rgba(93, 74, 48, .12), 0 50px 90px rgba(93, 74, 48, .16);
-    overflow: hidden;
-  }
-
-  .desktop::before {
-    content: "";
-    position: absolute;
-    left: -120px;
-    bottom: -260px;
-    width: 900px;
-    height: 480px;
-    border-radius: 50%;
-    background: #C7E5BD;
-  }
-
-  .desktop::after {
-    content: "";
-    position: absolute;
-    right: -160px;
-    bottom: -300px;
-    width: 760px;
-    height: 460px;
-    border-radius: 50%;
-    background: #B4DBAD;
-  }
-
-  .widget {
-    position: absolute;
-    left: 68px;
-    top: 78px;
-    width: 724px;
-    height: 464px;
-    padding: 24px 28px;
-    background: var(--cream);
-    border: 4px solid var(--border);
-    border-radius: 34px;
-    box-shadow: 0 12px 0 rgba(93, 74, 48, .12);
-    z-index: 2;
-  }
-
-  .widget .panel-head { margin-bottom: 12px; }
-  .widget .ribbon { font-size: 24px; padding: 7px 20px; }
-  .widget .updated { font-size: 18px; }
-
-  .tiles {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  .tile {
-    padding: 14px 18px;
-    background: var(--paper);
-    border: 3px solid var(--soft);
-    border-radius: 22px;
-  }
-
-  .tile-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .tile .avatar { width: 34px; height: 34px; font-size: 18px; border-width: 2px; }
-  .tile .name { font-size: 22px; }
-  .tile .plan { font-size: 14px; padding: 3px 10px; }
-  .tile .track { height: 13px; margin-bottom: 7px; }
-  .tile .pct { font-size: 18px; text-align: left; }
-  .tile .label { font-size: 16px; margin-bottom: 6px; display: block; }
-
-  .end-scene {
-    z-index: 9;
-    display: grid;
-    place-items: center;
-    background: radial-gradient(circle at 50% 42%, #FFFDF4 0%, #F8F3DF 62%, rgba(248, 243, 223, .97) 100%);
-    opacity: 0;
-  }
-
-  .end-inner { text-align: center; }
-
-  .app-icon {
-    display: grid;
-    place-items: center;
-    width: 156px;
-    height: 156px;
-    margin: 0 auto 28px;
-    border: 4px solid #0E8F84;
-    border-radius: 42px;
-    background: linear-gradient(160deg, #2AD8C8 0%, #11A89B 100%);
-    box-shadow: 0 14px 0 rgba(17, 168, 155, .24);
-  }
-
-  .end-inner h1 {
-    font-size: 92px;
-    font-weight: 900;
     letter-spacing: 4px;
-    color: var(--ink);
-    text-shadow: 0 6px 0 #EBD9B0;
+    color: var(--muted);
   }
 
-  .end-inner .lead {
-    margin-top: 14px;
-    font-size: 38px;
-    font-weight: 800;
-    color: var(--body);
-  }
-
-  .end-inner .meta {
-    margin-top: 30px;
-    font-size: 27px;
-    font-weight: 800;
+  .chapter-num {
+    display: inline-block;
+    margin-right: 16px;
     color: var(--teal-dark);
+    font-variant-numeric: tabular-nums;
   }
 
-  .end-inner .fine {
-    margin-top: 10px;
+  .chapter-title {
+    margin-top: 14px;
+    width: 900px;
+    font-size: 66px;
+    line-height: 1.3;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--ink);
+  }
+
+  .chapter-rule {
+    margin-top: 24px;
+    width: 900px;
+    height: 1px;
+    background: rgba(121, 79, 39, .18);
+    transform-origin: left center;
+  }
+
+  .shot {
+    display: block;
+    height: auto;
+    border: 2px solid rgba(121, 79, 39, .14);
+    background: var(--bg);
+    object-fit: cover;
+  }
+
+  .panel-shot {
+    position: absolute;
+    left: 90px;
+    top: 380px;
+    width: 430px;
+    border-radius: 26px;
+    box-shadow: 0 30px 70px rgba(61, 52, 40, .16), 0 6px 18px rgba(61, 52, 40, .08);
+  }
+
+  .agent-list {
+    position: absolute;
+    left: 580px;
+    top: 380px;
+    width: 410px;
+  }
+
+  .agent-row {
+    width: 410px;
+    height: 100px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(121, 79, 39, .16);
+  }
+
+  .agent-name {
+    font-size: 35px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--ink);
+  }
+
+  .agent-windows {
+    margin-top: 4px;
     font-size: 22px;
     font-weight: 700;
     color: var(--muted);
   }
 
-  .vignette {
+  .hint {
+    margin-top: 34px;
+    width: 410px;
+    font-size: 21px;
+    line-height: 1.65;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .widget-large {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-    background: radial-gradient(circle at 50% 46%, rgba(121, 79, 39, 0) 58%, rgba(121, 79, 39, .08) 100%);
+    left: 90px;
+    top: 380px;
+    width: 480px;
+    border-radius: 26px;
+    box-shadow: 0 24px 54px rgba(61, 52, 40, .14);
+  }
+
+  .widget-medium {
+    position: absolute;
+    left: 90px;
+    top: 925px;
+    width: 480px;
+    border-radius: 24px;
+    box-shadow: 0 20px 44px rgba(61, 52, 40, .13);
+  }
+
+  .widget-small {
+    position: absolute;
+    left: 620px;
+    top: 380px;
+    width: 240px;
+    border-radius: 24px;
+    box-shadow: 0 20px 44px rgba(61, 52, 40, .13);
+  }
+
+  .widget-legend {
+    position: absolute;
+    left: 620px;
+    top: 690px;
+    width: 370px;
+  }
+
+  .legend-line {
+    width: 370px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(121, 79, 39, .16);
+    font-size: 25px;
+    font-weight: 800;
+    color: var(--body);
+  }
+
+  .legend-line b {
+    display: inline-block;
+    width: 106px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+
+  .widget-note {
+    position: absolute;
+    left: 620px;
+    top: 986px;
+    width: 370px;
+    font-size: 21px;
+    line-height: 1.65;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .read-list {
+    position: absolute;
+    left: 90px;
+    top: 400px;
+    width: 900px;
+  }
+
+  .read-row {
+    display: flex;
+    align-items: flex-start;
+    width: 900px;
+    height: 156px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(121, 79, 39, .16);
+  }
+
+  .read-index {
+    flex: 0 0 64px;
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--teal-dark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .read-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .read-title {
+    display: block;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+
+  .read-desc {
+    display: block;
+    margin-top: 8px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .read-note {
+    position: absolute;
+    left: 90px;
+    top: 1130px;
+    width: 900px;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .end-inner {
+    position: absolute;
+    left: 90px;
+    top: 500px;
+    width: 900px;
+  }
+
+  .end-kicker {
+    width: 900px;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 7px;
+    color: var(--teal-dark);
+  }
+
+  .end-title {
+    margin-top: 20px;
+    width: 900px;
+    font-size: 132px;
+    line-height: 1.36;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--ink);
+  }
+
+  .end-sub {
+    margin-top: 24px;
+    width: 900px;
+    font-size: 46px;
+    line-height: 1.4;
+    font-weight: 800;
+    color: var(--body);
+  }
+
+  .end-rule {
+    margin-top: 44px;
+    width: 140px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--teal);
+    transform-origin: left center;
+  }
+
+  .end-meta {
+    margin-top: 30px;
+    width: 900px;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .end-link {
+    margin-top: 14px;
+    width: 900px;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--teal-dark);
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <div class="sky"></div>
-  <div class="sun"></div>
-  <div class="cloud c1" data-cloud></div>
-  <div class="cloud c2" data-cloud></div>
-  <div class="cloud c3" data-cloud></div>
-  <div class="cloud c4" data-cloud></div>
-  <div class="hill hill-back"></div>
-  <div class="hill hill-front"></div>
+  <div class="grid" id="grid"></div>
 
-  <svg class="palm" id="palm" viewBox="0 0 380 520" aria-hidden="true">
-    <path d="M188 500 C178 392 168 318 196 206" fill="none" stroke="#B98A54" stroke-width="30" stroke-linecap="round"/>
-    <path d="M188 500 C178 392 168 318 196 206" fill="none" stroke="#C99B63" stroke-width="12" stroke-linecap="round" opacity=".55"/>
-    <g fill="#5FAE72">
-      <path d="M196 208 C150 170 96 170 46 196 C108 194 158 216 194 232 Z"/>
-      <path d="M200 204 C244 156 300 146 348 168 C290 174 240 198 208 226 Z"/>
-      <path d="M198 202 C186 144 202 92 244 58 C230 112 224 158 214 204 Z"/>
-      <path d="M192 210 C140 190 104 214 82 258 C126 226 164 220 198 232 Z"/>
-      <path d="M204 212 C258 200 300 222 322 268 C278 232 238 226 206 234 Z"/>
-    </g>
-    <g fill="#77C088">
-      <path d="M198 208 C164 188 132 190 104 208 C142 204 174 216 196 228 Z"/>
-      <path d="M202 206 C238 176 274 174 304 192 C266 190 234 204 210 224 Z"/>
-    </g>
-    <circle cx="188" cy="204" r="17" fill="#C98F5B"/>
-    <circle cx="208" cy="214" r="14" fill="#B87C49"/>
-    <circle cx="174" cy="216" r="13" fill="#D19B66"/>
-  </svg>
-
-  <div class="sea sea-back"></div>
-  <div class="sea sea-front"></div>
-  <div class="sand"></div>
-
-  <div class="mascot" id="mascot">
-    <svg viewBox="0 0 300 300" aria-hidden="true">
-      <ellipse cx="150" cy="283" rx="92" ry="14" fill="#7A5B35" opacity=".12"/>
-      <circle cx="76" cy="82" r="35" fill="#E9C99C" stroke="#794F27" stroke-width="9"/>
-      <circle cx="224" cy="82" r="35" fill="#E9C99C" stroke="#794F27" stroke-width="9"/>
-      <circle cx="76" cy="82" r="16" fill="#F3B5A8"/>
-      <circle cx="224" cy="82" r="16" fill="#F3B5A8"/>
-      <circle cx="150" cy="158" r="105" fill="#F8E7C6" stroke="#794F27" stroke-width="9"/>
-      <ellipse cx="150" cy="205" rx="52" ry="34" fill="#FFF8E8"/>
-      <ellipse cx="150" cy="184" rx="15" ry="11" fill="#794F27"/>
-      <path d="M150 196 q0 17 -13 19 M150 196 q0 17 13 19" fill="none" stroke="#794F27" stroke-width="6" stroke-linecap="round"/>
-      <ellipse class="eye" cx="110" cy="148" rx="9" ry="9" fill="#794F27"/>
-      <ellipse class="eye" cx="190" cy="148" rx="9" ry="9" fill="#794F27"/>
-      <circle cx="86" cy="178" r="15" fill="#F2A9A0" opacity=".65"/>
-      <circle cx="214" cy="178" r="15" fill="#F2A9A0" opacity=".65"/>
-      <path d="M60 160 l-30 -10 M62 176 l-32 2 M240 160 l30 -10 M238 176 l32 2" stroke="#794F27" stroke-width="4" stroke-linecap="round" opacity=".55"/>
-      <path d="M198 66 q22 -26 46 -18 q-6 26 -32 30 q-10 2 -14 -12 Z" fill="#6EBB7E" stroke="#4E9C62" stroke-width="4"/>
-      <path d="M206 62 q16 2 30 -8" fill="none" stroke="#4E9C62" stroke-width="4" stroke-linecap="round"/>
-    </svg>
+  <div class="chrome" id="chrome">
+    <span class="brand"><span class="brand-dot"></span>AiLimits</span>
+    <span class="chrome-step" id="chromeStep">macOS</span>
   </div>
+  <div class="chrome-rule" id="chromeRule"></div>
 
   <section class="scene title-scene" id="titleScene">
-    <div class="sign">
-      <span class="tag">本地 AI 额度</span>
-      <h1>今天，还剩多少？</h1>
-      <p>Claude · Codex · Cursor · Grok</p>
-      <span class="cta" id="cta">点开菜单栏 →</span>
+    <div class="title-block" id="titleBlock">
+      <div class="kicker" id="titleKicker">本地 AI 额度 · LOCAL LIMITS</div>
+      <h1 class="title-title" id="titleTitle">本地 AI 额度<br>一眼看完</h1>
+      <p class="title-sub" id="titleSub">Claude、Codex、Cursor、Grok 的剩余额度<br>收在同一个菜单栏面板里</p>
+      <div class="title-rule" id="titleRule"></div>
+      <p class="title-meta" id="titleMeta">动森风格 · 菜单栏与桌面小组件 · 本机读取</p>
+    </div>
+    <div class="title-foot" id="titleFoot">
+      <span>Claude</span><span class="pill"></span>
+      <span>Codex</span><span class="pill"></span>
+      <span>Cursor</span><span class="pill"></span>
+      <span>Grok</span>
     </div>
   </section>
 
-  <section class="scene panel-scene" id="panelScene">
-    <div class="menubar" id="menubar">
-      <svg class="gauge" viewBox="0 0 56 56" aria-hidden="true">
-        <path d="M8 38a20 20 0 1 1 40 0" fill="none" stroke="#19C8B9" stroke-width="7" stroke-linecap="round"/>
-        <path d="M28 36l11-11" stroke="#794F27" stroke-width="5" stroke-linecap="round"/>
-        <circle cx="28" cy="38" r="5" fill="#794F27"/>
-      </svg>
-      <b>剩余 12%</b>
-    </div>
-
-    <div class="panel" id="panel">
-      <div class="panel-head">
-        <span class="ribbon">Agent 额度</span>
-        <span class="updated">15:32 更新</span>
+  <section class="scene" id="chapterOne">
+    <header class="chapter-head" id="headOne">
+      <div class="chapter-kicker" id="kickerOne"><span class="chapter-num">01</span>菜单栏</div>
+      <h2 class="chapter-title" id="titleOne">一屏看完四家额度</h2>
+      <div class="chapter-rule" id="ruleOne"></div>
+    </header>
+    <img class="shot panel-shot" id="panelShot" src="../docs/images/panel.png" alt="菜单栏面板截图" />
+    <div class="agent-list" id="agentList">
+      <div class="agent-row">
+        <div class="agent-name">Claude</div>
+        <div class="agent-windows">5 小时 · 7 天</div>
       </div>
-      <div id="cards"></div>
-    </div>
-
-    <div class="caption" id="caption">
-      <b id="captionMain">Cursor 账号里的 GrokBot</b>
-      <span id="captionSub">Cursor 后台单独给出一份额度</span>
+      <div class="agent-row">
+        <div class="agent-name">Codex</div>
+        <div class="agent-windows">5 小时 · 7 天</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">Cursor</div>
+        <div class="agent-windows">月度 · 按模型拆分</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">Grok</div>
+        <div class="agent-windows">GrokBuild · GrokBot</div>
+      </div>
+      <p class="hint" id="hintOne">进度条按剩余量填充，剩余 30% 及以下变黄，10% 及以下变红。</p>
     </div>
   </section>
 
-  <section class="scene widget-scene" id="widgetScene">
-    <div class="desktop" id="desktop">
-      <div class="widget">
-        <div class="panel-head">
-          <span class="ribbon">Agent 额度</span>
-          <span class="updated">15:32</span>
-        </div>
-        <div class="tiles" id="tiles"></div>
+  <section class="scene" id="chapterTwo">
+    <header class="chapter-head" id="headTwo">
+      <div class="chapter-kicker" id="kickerTwo"><span class="chapter-num">02</span>桌面小组件</div>
+      <h2 class="chapter-title" id="titleTwo">抬眼就能看到</h2>
+      <div class="chapter-rule" id="ruleTwo"></div>
+    </header>
+    <img class="shot widget-large" id="widgetLarge" src="../docs/images/widget-large.png" alt="大号桌面小组件" />
+    <img class="shot widget-medium" id="widgetMedium" src="../docs/images/widget-medium.png" alt="中号桌面小组件" />
+    <img class="shot widget-small" id="widgetSmall" src="../docs/images/widget-small.png" alt="小号桌面小组件" />
+    <div class="widget-legend" id="widgetLegend">
+      <div class="legend-line"><b>小号</b>一份额度</div>
+      <div class="legend-line"><b>中号</b>两份额度</div>
+      <div class="legend-line"><b>大号</b>四份额度</div>
+    </div>
+    <p class="widget-note" id="widgetNote">组件和菜单栏读同一份快照，按消耗最高的账号排在前面。</p>
+  </section>
+
+  <section class="scene" id="chapterThree">
+    <header class="chapter-head" id="headThree">
+      <div class="chapter-kicker" id="kickerThree"><span class="chapter-num">03</span>本机读取</div>
+      <h2 class="chapter-title" id="titleThree">不填密钥，直接读</h2>
+      <div class="chapter-rule" id="ruleThree"></div>
+    </header>
+    <div class="read-list" id="readList">
+      <div class="read-row">
+        <span class="read-index">01</span>
+        <span class="read-body">
+          <span class="read-title">读取本机已有的登录状态</span>
+          <span class="read-desc">Claude、Codex、Cursor、Grok 各自的本机凭据</span>
+        </span>
+      </div>
+      <div class="read-row">
+        <span class="read-index">02</span>
+        <span class="read-body">
+          <span class="read-title">不需要填写接口地址与密钥</span>
+          <span class="read-desc">额度直接来自各家官方接口</span>
+        </span>
+      </div>
+      <div class="read-row">
+        <span class="read-index">03</span>
+        <span class="read-body">
+          <span class="read-title">每 5 分钟自动刷新</span>
+          <span class="read-desc">任一家读取失败时，30 秒后重试</span>
+        </span>
       </div>
     </div>
-    <div class="caption" id="widgetCaption">
-      <b>桌面小组件，抬眼就能看</b>
-      <span>单格 · 双格 · 四格</span>
-    </div>
+    <p class="read-note" id="readNote">额度信息只在本机读取和保存。</p>
   </section>
 
-  <section class="scene end-scene" id="endScene">
-    <div class="end-inner">
-      <div class="app-icon">
-        <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
-          <path d="M18 62a30 30 0 1 1 60 0" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
-          <path d="M48 58l16-16" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-          <circle cx="48" cy="62" r="7" fill="#fff"/>
-          <path d="M66 24q14 -14 24 -6q-4 14 -20 14q-7 0 -4 -8Z" fill="#B9F0E8" opacity=".9"/>
-        </svg>
-      </div>
-      <h1>Agent 额度</h1>
-      <p class="lead">看一眼，就知道还剩多少</p>
-      <p class="meta">macOS 菜单栏 · 桌面小组件</p>
-      <p class="fine">本机读取 · 不需要填写密钥</p>
+  <section class="scene" id="endScene">
+    <div class="end-inner" id="endInner">
+      <div class="end-kicker" id="endKicker">macOS · OPEN SOURCE</div>
+      <h1 class="end-title" id="endTitle">AiLimits</h1>
+      <p class="end-sub" id="endSub">本地 AI 额度，一眼看完</p>
+      <div class="end-rule" id="endRule"></div>
+      <p class="end-meta" id="endMeta">菜单栏下拉 · 桌面小组件</p>
+      <p class="end-link" id="endLink">github.com/Wadehl/ai-limits</p>
     </div>
   </section>
-
-  <div class="vignette"></div>
 </div>
 
 <script>
-  const providers = [
-    { key: "claude", initial: "A", name: "Claude", plan: "Max", rows: [["5 小时", 58], ["7 天", 82]] },
-    { key: "codex", initial: "X", name: "Codex", plan: "Plus", rows: [["5 小时", 95], ["7 天", 51]] },
-    { key: "cursor", initial: "C", name: "Cursor", plan: "Enterprise", rows: [["月度", 37], ["GrokBot · 7 天", 100]] },
-    { key: "grok", initial: "G", name: "Grok", plan: "SuperGrok", rows: [["GrokBuild · 7 天", 12], ["GrokBot · 7 天", 36]] }
-  ];
-
-  const cardsRoot = document.getElementById("cards");
-  const rows = [];
-
-  providers.forEach((provider, cardIndex) => {
-    const card = document.createElement("article");
-    card.className = "card";
-    const head = document.createElement("div");
-    head.className = "card-head";
-    head.innerHTML = `<span class="avatar ${provider.key}">${provider.initial}</span>` +
-      `<span class="name">${provider.name}</span>` +
-      `<span class="plan">${provider.plan}</span>`;
-    card.appendChild(head);
-
-    provider.rows.forEach(([label, target], rowIndex) => {
-      const row = document.createElement("div");
-      row.className = "row";
-      row.innerHTML = `<span class="label">${label}</span>` +
-        `<div class="track"><div class="fill"></div></div>` +
-        `<span class="pct">剩余 0%</span>`;
-      card.appendChild(row);
-      rows.push({
-        element: row,
-        fill: row.querySelector(".fill"),
-        pct: row.querySelector(".pct"),
-        target,
-        cardIndex,
-        rowIndex
-      });
-    });
-    cardsRoot.appendChild(card);
-  });
-
-  const tilesRoot = document.getElementById("tiles");
-  const tiles = [];
-  const widgetData = [
-    { key: "claude", initial: "A", name: "Claude", plan: "Max", label: "5 小时", value: 58 },
-    { key: "codex", initial: "X", name: "Codex", plan: "Plus", label: "7 天", value: 51 },
-    { key: "cursor", initial: "C", name: "Cursor", plan: "Enterprise", label: "月度", value: 37 },
-    { key: "grok", initial: "G", name: "Grok", plan: "SuperGrok", label: "7 天", value: 12 }
-  ];
-
-  widgetData.forEach((item) => {
-    const tile = document.createElement("article");
-    tile.className = "tile";
-    tile.innerHTML = `<div class="tile-head"><span class="avatar ${item.key}">${item.initial}</span>` +
-      `<span class="name">${item.name}</span><span class="plan">${item.plan}</span></div>` +
-      `<span class="label">${item.label}</span>` +
-      `<div class="track"><div class="fill"></div></div>` +
-      `<span class="pct">剩余 0%</span>`;
-    tilesRoot.appendChild(tile);
-    tiles.push({
-      element: tile,
-      fill: tile.querySelector(".fill"),
-      pct: tile.querySelector(".pct"),
-      target: item.value
-    });
-  });
-
-  const titleScene = document.getElementById("titleScene");
-  const panelScene = document.getElementById("panelScene");
-  const widgetScene = document.getElementById("widgetScene");
-  const endScene = document.getElementById("endScene");
-  const menubar = document.getElementById("menubar");
-  const panel = document.getElementById("panel");
-  const caption = document.getElementById("caption");
-  const captionMain = document.getElementById("captionMain");
-  const captionSub = document.getElementById("captionSub");
-  const widgetCaption = document.getElementById("widgetCaption");
-  const desktop = document.getElementById("desktop");
-  const mascot = document.getElementById("mascot");
-  const palm = document.getElementById("palm");
-  const cta = document.getElementById("cta");
-  const clouds = [...document.querySelectorAll("[data-cloud]")];
-  const cardElements = [...document.querySelectorAll(".card")];
-  const eyes = [...document.querySelectorAll(".eye")];
-
   const DURATION = 12.4;
+
+  const $ = (id) => document.getElementById(id);
+  const grid = $("grid");
+  const chrome = $("chrome");
+  const chromeRule = $("chromeRule");
+  const chromeStep = $("chromeStep");
+
+  const titleScene = $("titleScene");
+  const titleBlock = $("titleBlock");
+  const titleKicker = $("titleKicker");
+  const titleTitle = $("titleTitle");
+  const titleSub = $("titleSub");
+  const titleRule = $("titleRule");
+  const titleMeta = $("titleMeta");
+  const titleFoot = $("titleFoot");
+
+  const chapterOne = $("chapterOne");
+  const chapterTwo = $("chapterTwo");
+  const chapterThree = $("chapterThree");
+  const endScene = $("endScene");
+
+  const headOne = $("headOne");
+  const kickerOne = $("kickerOne");
+  const titleOne = $("titleOne");
+  const ruleOne = $("ruleOne");
+  const panelShot = $("panelShot");
+  const agentList = $("agentList");
+  const agentRows = [...agentList.querySelectorAll(".agent-row")];
+  const hintOne = $("hintOne");
+
+  const headTwo = $("headTwo");
+  const kickerTwo = $("kickerTwo");
+  const titleTwo = $("titleTwo");
+  const ruleTwo = $("ruleTwo");
+  const widgetLarge = $("widgetLarge");
+  const widgetMedium = $("widgetMedium");
+  const widgetSmall = $("widgetSmall");
+  const widgetLegend = $("widgetLegend");
+  const legendLines = [...widgetLegend.querySelectorAll(".legend-line")];
+  const widgetNote = $("widgetNote");
+
+  const headThree = $("headThree");
+  const kickerThree = $("kickerThree");
+  const titleThree = $("titleThree");
+  const ruleThree = $("ruleThree");
+  const readRows = [...$("readList").querySelectorAll(".read-row")];
+  const readNote = $("readNote");
+
+  const endInner = $("endInner");
+  const endKicker = $("endKicker");
+  const endTitle = $("endTitle");
+  const endSub = $("endSub");
+  const endRule = $("endRule");
+  const endMeta = $("endMeta");
+  const endLink = $("endLink");
 
   const clamp = (value, low = 0, high = 1) => Math.min(high, Math.max(low, value));
   const progress = (t, start, end) => clamp((t - start) / (end - start));
   const easeOut = (x) => 1 - Math.pow(1 - x, 3);
   const easeInOut = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  const easeBack = (x) => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+
+  const sceneOpacity = (t, inStart, inEnd, outStart, outEnd) =>
+    easeOut(progress(t, inStart, inEnd)) * (1 - easeInOut(progress(t, outStart, outEnd)));
+
+  const rise = (element, t, start, duration = .4, distance = 30) => {
+    const value = easeOut(progress(t, start, start + duration));
+    element.style.opacity = String(value);
+    element.style.transform = `translateY(${(1 - value) * distance}px)`;
   };
-  const pulse = (t, start, end) => {
-    const rise = progress(t, start, start + .32);
-    const fall = 1 - progress(t, end - .3, end);
-    return easeInOut(rise) * easeInOut(fall);
+
+  const drawRule = (element, t, start, duration = .5) => {
+    const value = easeOut(progress(t, start, start + duration));
+    element.style.transform = `scaleX(${value})`;
   };
-  const barColor = (target) => target >= 30 ? "var(--teal)" : target >= 10 ? "var(--yellow)" : "var(--red)";
 
   function setTime(time) {
     const t = clamp(time, 0, DURATION);
 
-    clouds.forEach((cloud, index) => {
-      const drift = Math.sin(t * .24 + index * 1.7) * 20;
-      cloud.style.marginLeft = `${drift}px`;
-      cloud.style.marginTop = `${Math.sin(t * .18 + index) * 7}px`;
+    grid.style.transform = `translateY(${Math.sin(t * .32) * 10}px)`;
+
+    const chromeOut = 1 - easeInOut(progress(t, 11.1, 11.4));
+    chrome.style.opacity = String(chromeOut);
+    chromeRule.style.opacity = String(chromeOut);
+    if (t < 2.7) chromeStep.textContent = "macOS";
+    else if (t < 6.0) chromeStep.textContent = "01 · 菜单栏";
+    else if (t < 9.05) chromeStep.textContent = "02 · 桌面小组件";
+    else if (t < 11.1) chromeStep.textContent = "03 · 本机读取";
+    else chromeStep.textContent = "macOS";
+
+    titleScene.style.opacity = String(sceneOpacity(t, 0, .5, 2.55, 2.98));
+    rise(titleKicker, t, .25, .45, 22);
+    rise(titleTitle, t, .38, .6, 40);
+    rise(titleSub, t, .55, .55, 30);
+    rise(titleMeta, t, .7, .5, 24);
+    rise(titleFoot, t, .9, .55, 24);
+    drawRule(titleRule, t, .62, .55);
+
+    chapterOne.style.opacity = String(sceneOpacity(t, 2.78, 3.2, 5.85, 6.25));
+    rise(kickerOne, t, 2.85, .4, 22);
+    rise(titleOne, t, 2.93, .45, 26);
+    drawRule(ruleOne, t, 3.05, .5);
+    const panelIn = easeOut(progress(t, 2.98, 3.6));
+    panelShot.style.opacity = String(panelIn);
+    panelShot.style.transform = `translateY(${(1 - panelIn) * 90}px) scale(${.97 + .03 * panelIn})`;
+    agentRows.forEach((row, index) => {
+      const value = easeOut(progress(t, 3.18 + index * .1, 3.55 + index * .1));
+      row.style.opacity = String(value);
+      row.style.transform = `translateX(${(1 - value) * 26}px)`;
     });
+    rise(hintOne, t, 3.6, .45, 20);
 
-    palm.style.transform = `rotate(${Math.sin(t * .9) * 2.4}deg)`;
-    const bob = Math.sin(t * 2.3) * 7;
-    mascot.style.transform = `translateY(${bob}px) rotate(${Math.sin(t * 1.5) * 1.2}deg)`;
-    const blinking = (t % 3.4) > 3.22;
-    eyes.forEach((eye) => eye.setAttribute("ry", blinking ? 2 : 9));
-
-    const titleOut = easeInOut(progress(t, 1.9, 2.4));
-    titleScene.style.opacity = String(1 - titleOut);
-    titleScene.style.transform = `translateY(${-70 * titleOut}px) scale(${1 - .05 * titleOut})`;
-    mascot.style.opacity = String(1 - titleOut);
-    const ctaIn = easeBack(progress(t, .85, 1.35));
-    cta.style.opacity = String(clamp(progress(t, .85, 1.1)));
-    cta.style.transform = `translateY(${(1 - ctaIn) * 14}px) scale(${.86 + .14 * ctaIn})`;
-
-    const panelSceneIn = progress(t, 2.0, 2.32);
-    const panelSceneOut = 1 - progress(t, 8.85, 9.25);
-    panelScene.style.opacity = String(panelSceneIn * panelSceneOut);
-
-    const menuIn = easeBack(progress(t, 2.05, 2.55));
-    menubar.style.transform = `translate(-50%, ${(1 - menuIn) * -120}px)`;
-    const panelIn = easeBack(progress(t, 2.25, 3.05));
-    panel.style.transform = `translate(-50%, ${(1 - panelIn) * -880}px)`;
-
-    cardElements.forEach((card, cardIndex) => {
-      const appear = easeOut(progress(t, 2.75 + cardIndex * .22, 3.15 + cardIndex * .22));
-      card.style.opacity = String(appear);
-      card.style.transform = `translateY(${(1 - appear) * 34}px)`;
+    chapterTwo.style.opacity = String(sceneOpacity(t, 6.08, 6.48, 8.9, 9.3));
+    rise(kickerTwo, t, 6.15, .4, 22);
+    rise(titleTwo, t, 6.23, .45, 26);
+    drawRule(ruleTwo, t, 6.35, .5);
+    const largeIn = easeOut(progress(t, 6.28, 6.85));
+    widgetLarge.style.opacity = String(largeIn);
+    widgetLarge.style.transform = `translateY(${(1 - largeIn) * 56}px) scale(${.96 + .04 * largeIn})`;
+    const mediumIn = easeOut(progress(t, 6.42, 7.0));
+    widgetMedium.style.opacity = String(mediumIn);
+    widgetMedium.style.transform = `translateY(${(1 - mediumIn) * 56}px) scale(${.96 + .04 * mediumIn})`;
+    const smallIn = easeOut(progress(t, 6.56, 7.12));
+    widgetSmall.style.opacity = String(smallIn);
+    widgetSmall.style.transform = `translateY(${(1 - smallIn) * 56}px) scale(${.96 + .04 * smallIn})`;
+    legendLines.forEach((line, index) => {
+      const value = easeOut(progress(t, 6.82 + index * .11, 7.2 + index * .11));
+      line.style.opacity = String(value);
+      line.style.transform = `translateX(${(1 - value) * 24}px)`;
     });
+    rise(widgetNote, t, 7.18, .45, 20);
 
-    rows.forEach((row) => {
-      const offset = row.cardIndex * .22 + row.rowIndex * .1;
-      const fillIn = easeOut(progress(t, 2.95 + offset, 3.75 + offset));
-      row.fill.style.width = `${row.target * fillIn}%`;
-      row.fill.style.background = barColor(row.target);
-      row.pct.textContent = `剩余 ${Math.round(row.target * fillIn)}%`;
+    chapterThree.style.opacity = String(sceneOpacity(t, 9.12, 9.52, 11.0, 11.4));
+    rise(kickerThree, t, 9.2, .4, 22);
+    rise(titleThree, t, 9.28, .45, 26);
+    drawRule(ruleThree, t, 9.4, .5);
+    readRows.forEach((row, index) => {
+      const value = easeOut(progress(t, 9.42 + index * .12, 9.8 + index * .12));
+      row.style.opacity = String(value);
+      row.style.transform = `translateX(${(1 - value) * 30}px)`;
     });
+    rise(readNote, t, 9.98, .45, 20);
 
-    const cursorGlow = pulse(t, 5.95, 7.2);
-    const grokGlow = pulse(t, 7.3, 8.7);
-    rows.forEach((row) => {
-      const glow = row.cardIndex === 2 && row.rowIndex === 1 ? cursorGlow
-        : row.cardIndex === 3 && row.rowIndex === 1 ? grokGlow : 0;
-      row.element.style.background = `rgba(25, 200, 185, ${.15 * glow})`;
-      row.element.style.boxShadow = glow > .01 ? `inset 0 0 0 ${3 * glow}px rgba(25, 200, 185, .85)` : "none";
-      row.element.style.transform = `scale(${1 + .012 * glow})`;
-    });
-
-    const captionIn = progress(t, 3.55, 3.95) * (1 - progress(t, 8.55, 8.9));
-    caption.style.opacity = String(captionIn);
-    if (t >= 7.15) {
-      captionMain.textContent = "桌面应用里的 GrokBot";
-      captionSub.textContent = "两处额度独立计算，各自显示";
-    } else {
-      captionMain.textContent = "Cursor 账号里的 GrokBot";
-      captionSub.textContent = "Cursor 后台单独给出一份额度";
-    }
-
-    const widgetIn = progress(t, 9.0, 9.4) * (1 - progress(t, 10.85, 11.25));
-    widgetScene.style.opacity = String(widgetIn);
-    const desktopIn = easeBack(progress(t, 9.05, 9.7));
-    desktop.style.transform = `translateY(${(1 - desktopIn) * 90}px) scale(${.93 + .07 * desktopIn})`;
-    widgetCaption.style.opacity = String(progress(t, 9.5, 9.9) * (1 - progress(t, 10.85, 11.2)));
-
-    tiles.forEach((tile, index) => {
-      const appear = easeOut(progress(t, 9.3 + index * .1, 9.85 + index * .1));
-      tile.element.style.opacity = String(appear);
-      tile.element.style.transform = `translateY(${(1 - appear) * 22}px)`;
-      tile.fill.style.width = `${tile.target * appear}%`;
-      tile.fill.style.background = barColor(tile.target);
-      tile.pct.textContent = `剩余 ${Math.round(tile.target * appear)}%`;
-    });
-
-    const endIn = easeOut(progress(t, 10.95, 11.5));
-    endScene.style.opacity = String(endIn);
-    endScene.style.transform = `scale(${.965 + .035 * endIn})`;
+    endScene.style.opacity = String(easeOut(progress(t, 11.18, 11.75)));
+    rise(endKicker, t, 11.25, .45, 24);
+    rise(endTitle, t, 11.3, .55, 36);
+    rise(endSub, t, 11.44, .5, 28);
+    drawRule(endRule, t, 11.52, .5);
+    rise(endMeta, t, 11.56, .45, 22);
+    rise(endLink, t, 11.66, .45, 22);
   }
 
   window.__setTime = setTime;
