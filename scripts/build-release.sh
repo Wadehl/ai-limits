@@ -6,7 +6,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 DERIVED="$DIST/DerivedData"
-APP_NAME="AiLimits"
+APP_NAME="Linook"
+VOLUME_NAME="Linook"
 
 cd "$ROOT"
 xcodegen generate
@@ -59,7 +60,7 @@ STAGING="$DIST/dmg"
 mkdir -p "$STAGING"
 ditto "$APP" "$STAGING/$APP_NAME.app"
 ln -s /Applications "$STAGING/Applications"
-hdiutil create -volname "$APP_NAME" -srcfolder "$STAGING" -ov -format UDZO "$DIST/$BASE.dmg"
+hdiutil create -volname "$VOLUME_NAME" -srcfolder "$STAGING" -ov -format UDZO "$DIST/$BASE.dmg"
 rm -rf "$STAGING"
 
 (cd "$DIST" && shasum -a 256 "$BASE.zip" "$BASE.dmg" > SHA256SUMS.txt && cat SHA256SUMS.txt)

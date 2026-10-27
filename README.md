@@ -1,6 +1,8 @@
-# Linook（狸记额度）
+# 狸记额度（Linook）
 
 macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度剩余。
+
+旧名 AiLimits。源码里的模块与目标名仍然沿用 `AiLimits*`，不影响使用。
 
 支持 Claude、Codex、Cursor、Grok 四种账号。凭据从本机已经登录的客户端里读取，再向各自的官方接口查询额度，过程中不需要手动填写任何密钥。
 
@@ -59,17 +61,19 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
 
 本项目没有付费的 Apple 开发者账号，发布包只做了临时签名（ad-hoc），没有 Developer ID 签名，也没有经过 Apple 公证，所以首次打开要手动放行。
 
-1. 在 [Releases](https://github.com/Wadehl/linook/releases) 下载 `AiLimits-<版本>-macOS.dmg`（或 `.zip`），把 `AiLimits.app` 拖进「应用程序」。可以用同一页的 `SHA256SUMS.txt` 核对文件。
+1. 在 [Releases](https://github.com/Wadehl/linook/releases) 下载 `Linook-<版本>-macOS.dmg`（或 `.zip`），把 `Linook.app` 拖进「应用程序」，在系统里显示为「狸记额度」。可以用同一页的 `SHA256SUMS.txt` 核对文件。
 2. 去掉下载隔离标记。必须带 `-r`，否则里面的小组件扩展仍然被隔离，小组件不会出现：
 
    ```bash
-   xattr -dr com.apple.quarantine /Applications/AiLimits.app
+   xattr -dr com.apple.quarantine /Applications/Linook.app
    ```
 
    不想用终端的话：双击打开，被拦下后到「系统设置 → 隐私与安全性」，在页面下方点「仍要打开」，再输入密码确认。macOS 14 也可以在 Finder 里右键 → 打开；macOS 15 起右键打开不再能绕过，只能用「仍要打开」或者上面的命令。
-3. 打开 `AiLimits.app`。它只在菜单栏显示图标，没有程序坞图标。
+3. 打开「狸记额度」（`Linook.app`）。它只在菜单栏显示图标，没有程序坞图标。
 
 每次升级覆盖安装之后，都要再执行一次第 2 步。
+
+从改名前的 AiLimits 升级：先退出旧应用，把「应用程序」里的 `AiLimits.app` 删掉，再装 `Linook.app`。两者的 bundle id 相同，同时留着会让系统登记两份小组件。已有的快照与设置会继续沿用，不用重新配置。
 
 ## 桌面小组件
 
@@ -85,7 +89,7 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
 3. 向系统登记小组件扩展，并确认登记成功（输出里有 `com.kevinkwok.AiLimitsWidgetExtension`，并且行首不是表示被忽略的 `-`）：
 
    ```bash
-   pluginkit -a /Applications/AiLimits.app/Contents/PlugIns/AiLimitsWidgetExtension.appex
+   pluginkit -a /Applications/Linook.app/Contents/PlugIns/AiLimitsWidgetExtension.appex
    pluginkit -e use -i com.kevinkwok.AiLimitsWidgetExtension
    pluginkit -m -v -i com.kevinkwok.AiLimitsWidgetExtension
    ```
@@ -96,11 +100,11 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
    killall chronod NotificationCenter 2>/dev/null || true
    ```
 
-5. 在桌面空白处右键 →「编辑小组件」，搜索「Agent 额度」，选尺寸后拖到桌面。
+5. 在桌面空白处右键 →「编辑小组件」，在「狸记额度」下找到「Agent 额度」（也可以直接搜索），选尺寸后拖到桌面。
 
 排查：
 
-- 小组件列表里找不到：多半是扩展还带着隔离标记，或者系统登记了多份。用 `pluginkit -m -D -v -i com.kevinkwok.AiLimitsWidgetExtension` 列出全部登记位置，只应该剩 `/Applications` 下的那一份；其余路径（例如 Xcode 的 DerivedData）删掉对应的 `.app`，然后重做第 3、4 步。仍然不行就注销重新登录或重启一次。
+- 小组件列表里找不到：多半是扩展还带着隔离标记，或者系统登记了多份。用 `pluginkit -m -D -v -i com.kevinkwok.AiLimitsWidgetExtension` 列出全部登记位置，只应该剩 `/Applications/Linook.app` 里的那一份；其余路径（例如 Xcode 的 DerivedData）删掉对应的 `.app`（包括改名前的 `/Applications/AiLimits.app`），然后重做第 3、4 步。仍然不行就注销重新登录或重启一次。
 - 小组件显示没有数据：确认第 2 步的快照文件存在并且在更新。
 - 升级之后小组件空白或不再刷新：从桌面移除旧的小组件，重做第 2 到 5 步后重新添加。
 - 临时签名的小组件扩展能否在桌面加载，Apple 没有正式承诺。如果在你的系统版本上始终不出现，请用下面的「从源码构建」。
@@ -113,8 +117,8 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
 
   ```bash
   ./scripts/build-release.sh
-  ditto dist/AiLimits.app /Applications/AiLimits.app
-  open /Applications/AiLimits.app
+  ditto dist/Linook.app /Applications/Linook.app
+  open /Applications/Linook.app
   ```
 
   产物与发布包相同（临时签名，小组件走 `~/Library/Application Support/AiLimits/`），然后按上面「桌面小组件」的第 2 到 5 步操作。
@@ -136,7 +140,7 @@ brew install xcodegen
 ./scripts/build-app.sh
 ```
 
-脚本会生成 `AiLimits.xcodeproj`、构建 Release、把产物安装到 `/Applications/AiLimits.app`，并向 LaunchServices 注册小组件扩展。
+脚本会生成 `AiLimits.xcodeproj`、构建 Release、把产物安装到 `/Applications/Linook.app`（如果还有改名前的 `/Applications/AiLimits.app` 会一并移除），并向 LaunchServices 注册小组件扩展。
 
 签名使用的是 `project.yml` 里的 `DEVELOPMENT_TEAM`，也可以用环境变量 `DEVELOPMENT_TEAM` 覆盖。macOS 要求应用组的标识前面带上开发者团队编号，应用组标识由 `project.yml` 的 `AILIMITS_APP_GROUP` 按团队编号生成，并写进应用与小组件的 Info.plist，`SnapshotStore` 从那里读取。
 
@@ -145,7 +149,7 @@ brew install xcodegen
 ## 自动构建与发布
 
 - `.github/workflows/build.yml`：每个 PR 与 main 分支的推送都会跑 `swift test`，再用 `scripts/build-release.sh` 做一次临时签名构建，检查小组件扩展能否被系统登记，安装包作为构建产物保留 14 天。
-- `.github/workflows/release.yml`：推送 `v*` 标签时构建通用二进制（Apple 芯片与 Intel），生成 `.zip`、`.dmg` 与 `SHA256SUMS.txt`，并发布到 GitHub Releases；版本号取自标签。也可以在 Actions 页面手动运行，手动运行只上传构建产物，不发布。
+- `.github/workflows/release.yml`：推送 `v*` 标签时构建通用二进制（Apple 芯片与 Intel），生成 `Linook-<版本>-macOS.zip`、`Linook-<版本>-macOS.dmg` 与 `SHA256SUMS.txt`，并发布到 GitHub Releases；版本号取自标签。也可以在 Actions 页面手动运行，手动运行只上传构建产物，不发布。
 
 发布新版本：
 

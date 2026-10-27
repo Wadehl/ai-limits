@@ -4,12 +4,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP=/Applications/AiLimits.app
+APP=/Applications/Linook.app
 APPEX="$APP/Contents/PlugIns/AiLimitsWidgetExtension.appex"
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister
 
 sudo rm -rf "$APP"
-sudo ditto "$ROOT/dist/AiLimits.app" "$APP"
+sudo ditto "$ROOT/dist/Linook.app" "$APP"
 "$LSREGISTER" -f -R -trusted "$APP"
 pluginkit -a "$APPEX" || true
 WIDGET_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APPEX/Contents/Info.plist")"

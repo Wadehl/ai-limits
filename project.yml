@@ -37,10 +37,15 @@ targets:
       - target: AiLimitsWidgetExtension
         embed: true
         codeSign: true
+    settings:
+      base:
+        # 应用包名为 Linook.app；目标名与 bundle id（com.kevinkwok.AiLimits）保持不变，兼容已安装的版本与小组件登记
+        PRODUCT_NAME: Linook
     info:
       path: Build/AiLimits-Info.plist
       properties:
-        CFBundleDisplayName: Agent 额度
+        CFBundleName: 狸记额度
+        CFBundleDisplayName: 狸记额度
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSMinimumSystemVersion: "14.0"
@@ -69,7 +74,7 @@ targets:
     info:
       path: Build/AiLimitsWidget-Info.plist
       properties:
-        CFBundleDisplayName: Agent 额度
+        CFBundleDisplayName: 狸记额度
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSMinimumSystemVersion: "14.0"

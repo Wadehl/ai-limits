@@ -48,7 +48,7 @@ public struct WidgetLayoutView: View {
         case .ready(let snapshot):
             ready(snapshot)
         case .empty:
-            message("打开 AiLimits\n读取本机额度")
+            message("打开狸记额度\n读取本机额度")
         case .failed(let text):
             message(text)
         }

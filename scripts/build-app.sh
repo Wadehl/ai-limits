@@ -3,7 +3,9 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIGURATION="${CONFIGURATION:-Release}"
-APP="/Applications/AiLimits.app"
+APP="/Applications/Linook.app"
+# 改名前安装的旧包，bundle id 相同，留着会让系统登记两份同名小组件
+OLD_APP="/Applications/AiLimits.app"
 
 # 换成自己的团队编号（包括免费的 Personal Team）：DEVELOPMENT_TEAM=XXXXXXXXXX ./scripts/build-app.sh
 TEAM_ARGS=()
@@ -20,9 +22,15 @@ xcodebuild -project AiLimits.xcodeproj -scheme AiLimits -configuration "$CONFIGU
     -destination 'platform=macOS' -allowProvisioningUpdates ${TEAM_ARGS[@]+"${TEAM_ARGS[@]}"} build
 
 rm -rf "$APP"
-ditto "$DERIVED/AiLimits.app" "$APP"
+ditto "$DERIVED/Linook.app" "$APP"
 
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister
+if [ -d "$OLD_APP" ]; then
+    pluginkit -r "$OLD_APP/Contents/PlugIns/AiLimitsWidgetExtension.appex" 2>/dev/null || true
+    "$LSREGISTER" -u "$OLD_APP" 2>/dev/null || true
+    rm -rf "$OLD_APP"
+    echo "已移除改名前的 $OLD_APP"
+fi
 "$LSREGISTER" -f -R -trusted "$APP"
 
 echo "已安装 $APP"
