@@ -68,7 +68,7 @@ struct ProviderCard: View {
                         .foregroundStyle(AnimalPalette.textDisabled)
                 }
             }
-            LimitBar(percent: window.usedPercent)
+            LimitBar(remainingPercent: window.remainingPercent)
         }
     }
 }

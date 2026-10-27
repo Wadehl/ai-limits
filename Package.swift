@@ -17,6 +17,7 @@ let package = Package(
         .executableTarget(name: "AiLimitsApp", dependencies: ["AiLimitsCore", "AiLimitsUI"]),
         .executableTarget(name: "AiLimitsWidget", dependencies: ["AiLimitsCore", "AiLimitsUI"]),
         .executableTarget(name: "AiLimitsWidgetPreview", dependencies: ["AiLimitsCore", "AiLimitsUI"]),
-        .testTarget(name: "AiLimitsUITests", dependencies: ["AiLimitsUI", "AiLimitsCore"])
+        .testTarget(name: "AiLimitsUITests", dependencies: ["AiLimitsUI", "AiLimitsCore"]),
+        .testTarget(name: "AiLimitsCoreTests", dependencies: ["AiLimitsCore"])
     ]
 )

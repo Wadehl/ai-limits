@@ -190,7 +190,7 @@ private struct WidgetProviderCell: View {
                         .lineLimit(1)
                 }
             }
-            LimitBar(percent: window.usedPercent, height: 8)
+            LimitBar(remainingPercent: window.remainingPercent, height: 8)
         }
     }
 }

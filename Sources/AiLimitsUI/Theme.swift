@@ -30,8 +30,8 @@ public enum AnimalPalette {
     public static let trackShadow = Color(red: 114 / 255, green: 93 / 255, blue: 66 / 255)
 
     /// 消耗到达这两个百分比后改用状态色
-    public static func usageColor(_ percent: Double) -> Color {
-        switch percent {
+    public static func usageColor(usedPercent: Double) -> Color {
+        switch usedPercent {
         case 90...: error
         case 70..<90: warning
         default: primary

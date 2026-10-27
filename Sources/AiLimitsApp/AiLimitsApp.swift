@@ -8,6 +8,10 @@ enum AiLimitsMain {
         if CommandLine.arguments.contains("--dump") {
             DumpCommand.run()
         }
+        if CommandLine.arguments.contains("--render-panel") {
+            MainActor.assumeIsolated { PanelPreviewRenderer.run() }
+            exit(0)
+        }
         AnimalFont.register()
         AiLimitsApp.main()
     }

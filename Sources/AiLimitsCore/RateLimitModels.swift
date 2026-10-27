@@ -12,6 +12,11 @@ public struct RateLimitWindow: Sendable, Codable, Equatable {
         self.resetsAt = resetsAt
         self.resetDescription = resetDescription
     }
+
+    /// 还剩多少可用，界面上的进度条与百分比都按它展示
+    public var remainingPercent: Double {
+        max(0, 100 - usedPercent)
+    }
 }
 
 public struct RateLimitBucket: Sendable, Codable, Equatable {
@@ -103,13 +108,5 @@ public struct RateLimitSnapshot: Sendable, Codable, Equatable {
     public init(providers: [ProviderLimits], fetchedAt: Date) {
         self.providers = providers
         self.fetchedAt = fetchedAt
-    }
-
-    /// 取到的额度窗口中消耗最高的百分比，用于菜单栏标题
-    public var peakUsedPercent: Double? {
-        providers
-            .filter { $0.status == .ok }
-            .flatMap { $0.orderedWindows.map(\.window.usedPercent) }
-            .max()
     }
 }

@@ -6,14 +6,16 @@ public enum SnapshotStore {
     public static let appGroupIdentifier = "52BF5GV693.group.com.kevinkwok.ailimits"
 
     public static var directoryURL: URL {
-        guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else {
-            fatalError("应用组 \(appGroupIdentifier) 无法定位共享目录")
+        get throws {
+            guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else {
+                throw LimitsError.requestFailed("应用组共享目录暂时不可用")
+            }
+            return url
         }
-        return url
     }
 
     public static var fileURL: URL {
-        directoryURL.appendingPathComponent("snapshot.json")
+        get throws { try directoryURL.appendingPathComponent("snapshot.json") }
     }
 
     public static func write(_ snapshot: RateLimitSnapshot) throws {
@@ -23,7 +25,7 @@ public enum SnapshotStore {
 
     /// 文件尚未生成时返回 nil
     public static func read() throws -> RateLimitSnapshot? {
-        guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+        guard try FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         return try decoder.decode(RateLimitSnapshot.self, from: Data(contentsOf: fileURL))
     }
 

@@ -5,6 +5,9 @@ import AiLimitsUI
 struct PanelView: View {
     @ObservedObject var model: LimitsViewModel
 
+    /// README 图片离屏渲染时去掉滚动区域，让面板按内容自然展开
+    var isPreview = false
+
     /// 列表最高高度，超出后由 ScrollView 滚动
     private let maxListHeight: CGFloat = 430
 
@@ -28,29 +31,17 @@ struct PanelView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(model.visibleProviders, id: \.provider) { limits in
-                        ProviderCard(limits: limits)
-                    }
-                    if model.visibleProviders.isEmpty {
-                        Text(model.fetchedAt == nil ? "正在读取本机额度…" : "本机没有检测到已登录的 Agent")
-                            .font(AnimalFont.body(13))
-                            .foregroundStyle(AnimalPalette.textMuted)
-                            .padding(.vertical, 24)
-                    }
+            if isPreview {
+                cardList
+            } else {
+                ScrollView {
+                    cardList
                 }
-                .padding(.vertical, 4)
-                .background(
-                    GeometryReader { proxy in
-                        Color.clear.preference(key: PanelListHeightKey.self, value: proxy.size.height)
-                    }
-                )
-            }
-            .frame(height: min(max(listHeight, 1), maxListHeight))
-            .scrollIndicators(.never)
-            .onPreferenceChange(PanelListHeightKey.self) { height in
-                listHeight = height
+                .frame(height: min(max(listHeight, 1), maxListHeight))
+                .scrollIndicators(.never)
+                .onPreferenceChange(PanelListHeightKey.self) { height in
+                    listHeight = height
+                }
             }
 
             HStack(spacing: 10) {
@@ -70,6 +61,26 @@ struct PanelView: View {
         .frame(width: 380)
         .background(AnimalPalette.background)
         .task { await model.refreshIfStale() }
+    }
+
+    private var cardList: some View {
+        VStack(spacing: 12) {
+            ForEach(model.visibleProviders, id: \.provider) { limits in
+                ProviderCard(limits: limits)
+            }
+            if model.visibleProviders.isEmpty {
+                Text(model.fetchedAt == nil ? "正在读取本机额度…" : "本机没有检测到已登录的 Agent")
+                    .font(AnimalFont.body(13))
+                    .foregroundStyle(AnimalPalette.textMuted)
+                    .padding(.vertical, 24)
+            }
+        }
+        .padding(.vertical, 4)
+        .background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: PanelListHeightKey.self, value: proxy.size.height)
+            }
+        )
     }
 }
 

@@ -4,11 +4,26 @@ import SQLite3
 public struct CursorLimitsProvider: Sendable {
     private static let dashboardOrigin = "https://cursor.com"
     private static let usageSummaryURL = URL(string: "https://cursor.com/api/usage-summary")!
+    private static let grokBotUsageURL = URL(
+        string: "https://api2.cursor.sh/aiserver.v1.DashboardService/GetSandUsageStatus"
+    )!
     private static let monthlyWindowMinutes = 43_200
+    private static let grokBotWindowMinutes = 10_080
     private static let keychainService = "cursor-access-token"
     private static let keychainAccount = "cursor-user"
 
-    public init() {}
+    private let urlSession: URLSession
+    private let tokenOverride: String?
+
+    public init() {
+        urlSession = .shared
+        tokenOverride = nil
+    }
+
+    init(token: String, urlSession: URLSession) {
+        self.urlSession = urlSession
+        self.tokenOverride = token
+    }
 
     private var cursorHome: URL {
         LocalPaths.override("CURSOR_CONFIG_DIR", fallback: LocalPaths.directory(".cursor"))
@@ -48,7 +63,8 @@ public struct CursorLimitsProvider: Sendable {
                 "Accept": "application/json",
                 "Origin": Self.dashboardOrigin,
                 "Referer": "\(Self.dashboardOrigin)/dashboard"
-            ]
+            ],
+            urlSession: urlSession
         )
         switch payload.status {
         case 200..<300:
@@ -80,8 +96,10 @@ public struct CursorLimitsProvider: Sendable {
         let windowMinutes = windowMinutes(start: start, end: end)
 
         if root["isUnlimited"] as? Bool == true {
+            let grokBot = try await grokBotBucket(token: token)
             return ProviderLimits(
                 provider: .cursor,
+                buckets: grokBot.map { [$0] } ?? [],
                 planType: planType,
                 accountLabel: accountLabel,
                 status: .ok,
@@ -108,6 +126,9 @@ public struct CursorLimitsProvider: Sendable {
         if onDemand?["enabled"] as? Bool == true,
            let percent = poolPercent(onDemand, fallbackKey: "totalPercentUsed") {
             buckets.append(RateLimitBucket(name: "On-demand", window: window(percent)))
+        }
+        if let grokBot = try await grokBotBucket(token: token) {
+            buckets.append(grokBot)
         }
 
         let planPercent = planEnabled ? poolPercent(plan, fallbackKey: "totalPercentUsed") : nil
@@ -138,6 +159,41 @@ public struct CursorLimitsProvider: Sendable {
         return (used / limit) * 100
     }
 
+    /// Cursor 的账号后台同时给出 GrokBot 的每周额度，和 GrokBuild 的账单是两套数字。
+    /// hasNonZeroIncludedLimit 为 false 表示这个账号没有可用的 GrokBot 额度。
+    private func grokBotBucket(token: SessionToken) async throws -> RateLimitBucket? {
+        let payload = try await HTTP.postJSON(
+            Self.grokBotUsageURL,
+            body: Data("{}".utf8),
+            headers: ["Authorization": "Bearer \(token.raw)", "Accept": "application/json"],
+            urlSession: urlSession
+        )
+        switch payload.status {
+        case 200..<300:
+            break
+        case 401, 403, 404:
+            return nil
+        default:
+            throw LimitsError.responseRejected(Self.grokBotUsageURL.absoluteString, payload.status)
+        }
+        guard let root = try payload.json() as? [String: Any] else {
+            throw LimitsError.responseMalformed(Self.grokBotUsageURL.absoluteString)
+        }
+        guard root["usesPooledEnterpriseAllowance"] as? Bool != true,
+              root["hasNonZeroIncludedLimit"] as? Bool == true,
+              let percent = finiteNumber(root["usagePercent"]) else {
+            return nil
+        }
+        return RateLimitBucket(
+            name: "GrokBot · 7 天",
+            window: makeWindow(
+                usedPercent: percent,
+                windowMinutes: Self.grokBotWindowMinutes,
+                resetsAt: parseCursorDate(root["nextResetTimestampUtc"])
+            )
+        )
+    }
+
     private func windowMinutes(start: Date?, end: Date?) -> Int {
         guard let start, let end, end > start else { return Self.monthlyWindowMinutes }
         return max(1, Int(((end.timeIntervalSince(start)) / 60).rounded()))
@@ -166,6 +222,9 @@ public struct CursorLimitsProvider: Sendable {
     }
 
     private func readToken() throws -> SessionToken? {
+        if let tokenOverride, let token = parseToken(tokenOverride) {
+            return token
+        }
         if let raw = try Keychain.genericPassword(service: Self.keychainService, account: Self.keychainAccount),
            let token = parseToken(raw) {
             return token

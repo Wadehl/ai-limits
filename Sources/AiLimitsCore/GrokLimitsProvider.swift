@@ -4,13 +4,25 @@ public struct GrokLimitsProvider: Sendable {
     private static let weeklyWindowMinutes = 10_080
     private static let monthlyWindowMinutes = 43_200
     private static let defaultProxyBase = "https://cli-chat-proxy.grok.com/v1"
-    private static let preferredIssuer = "https://auth.x.ai"
-    private static let tokenSkew: TimeInterval = 5 * 60
 
-    public init() {}
+    private let homeOverride: URL?
+    private let urlSession: URLSession
+    private let grokBotUsage: GrokBotUsageStore
+
+    public init() {
+        homeOverride = nil
+        urlSession = .shared
+        grokBotUsage = GrokBotUsageStore()
+    }
+
+    init(home: URL, urlSession: URLSession, grokBotUsage: GrokBotUsageStore = GrokBotUsageStore()) {
+        homeOverride = home
+        self.urlSession = urlSession
+        self.grokBotUsage = grokBotUsage
+    }
 
     private var grokHome: URL {
-        LocalPaths.override("GROK_HOME", fallback: LocalPaths.directory(".grok"))
+        homeOverride ?? LocalPaths.override("GROK_HOME", fallback: LocalPaths.directory(".grok"))
     }
 
     private var proxyBase: String {
@@ -21,15 +33,9 @@ public struct GrokLimitsProvider: Sendable {
         return configured.hasSuffix("/") ? String(configured.dropLast()) : configured
     }
 
-    private struct Session {
-        let accessToken: String
-        let userId: String?
-        let email: String?
-        let expiresAt: Date?
-    }
-
     public func fetch() async throws -> ProviderLimits {
-        guard let session = try readSession() else {
+        let auth = GrokAuthStore(home: grokHome, urlSession: urlSession)
+        guard var session = try await auth.session() else {
             return ProviderLimits(
                 provider: .grok,
                 status: .unavailable,
@@ -37,17 +43,12 @@ public struct GrokLimitsProvider: Sendable {
                 updatedAt: Date()
             )
         }
-        if let expiresAt = session.expiresAt, expiresAt.timeIntervalSinceNow <= Self.tokenSkew {
-            return ProviderLimits(
-                provider: .grok,
-                status: .error,
-                error: "Grok 的登录已经过期，运行一次 grok 让它自行刷新凭据",
-                updatedAt: Date()
-            )
-        }
-
         let creditsURL = URL(string: "\(proxyBase)/billing?format=credits")!
-        let payload = try await HTTP.get(creditsURL, headers: headers(session))
+        var payload = try await HTTP.get(creditsURL, headers: headers(session), urlSession: urlSession)
+        if payload.status == 401, let renewed = try await auth.session(rejectedToken: session.accessToken) {
+            session = renewed
+            payload = try await HTTP.get(creditsURL, headers: headers(session), urlSession: urlSession)
+        }
         guard (200..<300).contains(payload.status) else {
             return ProviderLimits(
                 provider: .grok,
@@ -74,7 +75,7 @@ public struct GrokLimitsProvider: Sendable {
         var monthly = monthlyWindow(config)
         if weekly == nil, monthly == nil {
             let fallbackURL = URL(string: "\(proxyBase)/billing")!
-            let fallbackPayload = try await HTTP.get(fallbackURL, headers: headers(session))
+            let fallbackPayload = try await HTTP.get(fallbackURL, headers: headers(session), urlSession: urlSession)
             guard (200..<300).contains(fallbackPayload.status) else {
                 return ProviderLimits(
                     provider: .grok,
@@ -93,7 +94,7 @@ public struct GrokLimitsProvider: Sendable {
             provider: .grok,
             weekly: weekly,
             monthly: monthly,
-            buckets: products,
+            buckets: products + (try grokBotBuckets()),
             planType: nonEmptyString(config["subscriptionTier"]),
             accountLabel: session.email ?? session.userId,
             status: .ok,
@@ -101,7 +102,22 @@ public struct GrokLimitsProvider: Sendable {
         )
     }
 
-    private func headers(_ session: Session) -> [String: String] {
+    /// Grok Bot 的用量由它自己的桌面应用记在本机缓存里，和 GrokBuild 的账单是两个独立的额度
+    private func grokBotBuckets() throws -> [RateLimitBucket] {
+        guard let usage = try grokBotUsage.read() else { return [] }
+        return [
+            RateLimitBucket(
+                name: "GrokBot · 7 天",
+                window: makeWindow(
+                    usedPercent: usage.usedPercent,
+                    windowMinutes: Self.weeklyWindowMinutes,
+                    resetsAt: usage.resetsAt
+                )
+            )
+        ]
+    }
+
+    private func headers(_ session: GrokSession) -> [String: String] {
         var headers = [
             "Authorization": "Bearer \(session.accessToken)",
             "X-XAI-Token-Auth": "xai-grok-cli",
@@ -210,43 +226,4 @@ public struct GrokLimitsProvider: Sendable {
         }
     }
 
-    /// 优先使用默认签发方的登录，其他签发方的记录只作为兼容回退
-    private func readSession() throws -> Session? {
-        let authFile = grokHome.appending(path: "auth.json")
-        guard let raw = try JSONFile.readIfPresent(at: authFile) else { return nil }
-        guard let root = raw as? [String: Any] else {
-            throw LimitsError.credentialsMalformed("Grok")
-        }
-
-        var preferredExpired: Session?
-        var fallback: Session?
-        var preferredKeySeen = false
-        for (key, value) in root {
-            let isPreferred = key == Self.preferredIssuer || key.hasPrefix("\(Self.preferredIssuer)::")
-            preferredKeySeen = preferredKeySeen || isPreferred
-            guard let entry = value as? [String: Any],
-                  let accessToken = nonEmptyString(entry["key"]) else {
-                continue
-            }
-            let session = Session(
-                accessToken: accessToken,
-                userId: nonEmptyString(entry["user_id"]),
-                email: nonEmptyString(entry["email"]),
-                expiresAt: parseResetDate(entry["expires_at"])
-            )
-            if isPreferred {
-                if isFresh(session) { return session }
-                if preferredExpired == nil { preferredExpired = session }
-                continue
-            }
-            if fallback == nil { fallback = session }
-        }
-        if let preferredExpired { return preferredExpired }
-        return preferredKeySeen ? nil : fallback
-    }
-
-    private func isFresh(_ session: Session) -> Bool {
-        guard let expiresAt = session.expiresAt else { return true }
-        return expiresAt.timeIntervalSinceNow > Self.tokenSkew
-    }
 }

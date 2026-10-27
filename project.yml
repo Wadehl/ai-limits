@@ -14,8 +14,8 @@ settings:
     DEVELOPMENT_TEAM: 52BF5GV693
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "2"
     ENABLE_HARDENED_RUNTIME: YES
 
 targets:
@@ -38,6 +38,8 @@ targets:
       path: Build/AiLimits-Info.plist
       properties:
         CFBundleDisplayName: Agent 额度
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSMinimumSystemVersion: "14.0"
         LSUIElement: true
         NSHumanReadableCopyright: Nunito 字体按 SIL Open Font License 1.1 使用
@@ -63,6 +65,8 @@ targets:
       path: Build/AiLimitsWidget-Info.plist
       properties:
         CFBundleDisplayName: Agent 额度
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSMinimumSystemVersion: "14.0"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension

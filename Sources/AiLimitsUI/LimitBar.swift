@@ -1,35 +1,38 @@
 import SwiftUI
 import WidgetKit
 
-/// 对应设计系统的 Progress：奶油底带网点纹理的胶囊轨道，实心填充，右侧百分比
+/// 对应设计系统的 Progress：奶油底带网点纹理的胶囊轨道，实心填充，右侧剩余百分比
 public struct LimitBar: View {
     @Environment(\.widgetInk) private var ink
 
-    public let percent: Double
+    /// 剩余可用百分比，填充长度与右侧数字都按它计算
+    public let remainingPercent: Double
     public var height: CGFloat
 
-    public init(percent: Double, height: CGFloat = 14) {
-        self.percent = percent
+    public init(remainingPercent: Double, height: CGFloat = 14) {
+        self.remainingPercent = remainingPercent
         self.height = height
     }
 
     public var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     track
-                    fill(width: geometry.size.width * percent / 100)
+                    fill(width: geometry.size.width * remainingPercent / 100)
                 }
             }
             .frame(height: height)
 
-            Text("\(Int(percent.rounded()))%")
+            Text("剩余 \(Int(remainingPercent.rounded()))%")
                 .font(AnimalFont.emphasis(12))
                 .foregroundStyle(ink.body)
                 .monospacedDigit()
-                .frame(minWidth: 38, alignment: .trailing)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(minWidth: 58, alignment: .trailing)
         }
-        .animation(AnimalMotion.fill, value: percent)
+        .animation(AnimalMotion.fill, value: remainingPercent)
     }
 
     @ViewBuilder
@@ -70,7 +73,7 @@ public struct LimitBar: View {
 
     private func fill(width: CGFloat) -> some View {
         Capsule()
-            .fill(ink.barFill ?? AnimalPalette.usageColor(percent))
+            .fill(ink.barFill ?? AnimalPalette.usageColor(usedPercent: 100 - remainingPercent))
             .frame(width: max(0, width))
             .widgetAccentable()
     }
