@@ -18,13 +18,27 @@ final class DisplaySettingsStore: ObservableObject {
         }
     }
 
-    func showsProgressBar(for provider: ProviderIdentifier) -> Bool {
-        settings.showsProgressBar(for: provider)
+    func isVisible(_ provider: ProviderIdentifier) -> Bool {
+        settings.isVisible(provider)
     }
 
-    func setShowsProgressBar(_ shows: Bool, for provider: ProviderIdentifier) {
-        guard settings.showsProgressBar(for: provider) != shows else { return }
-        settings.setShowsProgressBar(shows, for: provider)
+    func setVisible(_ visible: Bool, for provider: ProviderIdentifier) {
+        guard settings.isVisible(provider) != visible else { return }
+        settings.setVisible(visible, for: provider)
+        save()
+    }
+
+    func isWindowVisible(_ key: String, for provider: ProviderIdentifier) -> Bool {
+        settings.isWindowVisible(key, for: provider)
+    }
+
+    func setWindowVisible(_ visible: Bool, key: String, for provider: ProviderIdentifier) {
+        guard settings.isWindowVisible(key, for: provider) != visible else { return }
+        settings.setWindowVisible(visible, key: key, for: provider)
+        save()
+    }
+
+    private func save() {
         do {
             try settings.save()
         } catch {

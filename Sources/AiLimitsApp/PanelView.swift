@@ -73,13 +73,10 @@ struct PanelView: View {
 
     private var cardList: some View {
         VStack(spacing: 12) {
-            ForEach(model.visibleProviders, id: \.provider) { limits in
-                ProviderCard(
-                    limits: limits,
-                    showsProgressBar: display.showsProgressBar(for: limits.provider)
-                )
+            ForEach(showingProviders, id: \.provider) { limits in
+                ProviderCard(limits: limits)
             }
-            if model.visibleProviders.isEmpty {
+            if showingProviders.isEmpty {
                 Text(model.fetchedAt == nil ? "正在读取本机额度…" : "本机没有检测到已登录的 Agent")
                     .font(AnimalFont.body(13))
                     .foregroundStyle(AnimalPalette.textMuted)
@@ -92,6 +89,11 @@ struct PanelView: View {
                 Color.clear.preference(key: PanelListHeightKey.self, value: proxy.size.height)
             }
         )
+    }
+
+    /// 去掉设置里关掉的账号与额度窗口
+    private var showingProviders: [ProviderLimits] {
+        display.settings.applying(to: model.visibleProviders)
     }
 }
 

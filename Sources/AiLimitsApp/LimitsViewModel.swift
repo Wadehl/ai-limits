@@ -61,19 +61,18 @@ final class LimitsViewModel: ObservableObject {
     }
 
     /// 菜单栏轮流展示每个账号里剩余最多的那份额度，图标与数字来自同一个账号
-    var menuBarSummary: MenuBarSummary? {
-        let summaries = providers.menuBarSummaries()
+    func menuBarSummary(using settings: DisplaySettings) -> MenuBarSummary? {
+        let summaries = providers.menuBarSummaries(using: settings)
         guard !summaries.isEmpty else { return nil }
         return summaries[menuBarIndex % summaries.count]
     }
 
     private func advanceMenuBar() {
-        guard providers.menuBarSummaries().count > 1 else { return }
         menuBarIndex += 1
     }
 
-    var menuBarText: String {
-        guard let summary = menuBarSummary else { return "额度" }
+    func menuBarText(using settings: DisplaySettings) -> String {
+        guard let summary = menuBarSummary(using: settings) else { return "额度" }
         return "剩余 \(Int(summary.remainingPercent.rounded()))%"
     }
 

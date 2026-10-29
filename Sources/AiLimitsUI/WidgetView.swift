@@ -58,7 +58,7 @@ public struct WidgetLayoutView: View {
 
     @ViewBuilder
     private func ready(_ snapshot: RateLimitSnapshot) -> some View {
-        let providers = WidgetLayout.visible(snapshot, family: family)
+        let providers = WidgetLayout.visible(snapshot, family: family, using: entry.display)
         if providers.isEmpty {
             message("本机没有检测到已登录的 Agent")
         } else if family == .systemLarge {
@@ -70,28 +70,28 @@ public struct WidgetLayoutView: View {
                         .font(AnimalFont.body(10))
                         .foregroundStyle(ink.muted)
                 }
-                grid(providers, display: entry.display)
+                grid(providers)
             }
         } else {
-            grid(providers, display: entry.display)
+            grid(providers)
         }
     }
 
     @ViewBuilder
-    private func grid(_ providers: [ProviderLimits], display: DisplaySettings) -> some View {
+    private func grid(_ providers: [ProviderLimits]) -> some View {
         switch family {
         case .systemSmall:
-            cell(providers[0], showsReset: true, display: display)
+            cell(providers[0], showsReset: true)
         case .systemMedium:
             HStack(spacing: 10) {
-                ForEach(providers, id: \.provider) { cell($0, showsReset: false, display: display) }
+                ForEach(providers, id: \.provider) { cell($0, showsReset: false) }
                 if providers.count < 2 { Color.clear }
             }
         default:
             VStack(spacing: 10) {
                 ForEach(0..<2, id: \.self) { row in
                     HStack(spacing: 10) {
-                        ForEach(rowProviders(providers, row: row), id: \.provider) { cell($0, showsReset: true, display: display) }
+                        ForEach(rowProviders(providers, row: row), id: \.provider) { cell($0, showsReset: true) }
                         if rowProviders(providers, row: row).count < 2 { Color.clear }
                     }
                 }
@@ -99,12 +99,8 @@ public struct WidgetLayoutView: View {
         }
     }
 
-    private func cell(_ limits: ProviderLimits, showsReset: Bool, display: DisplaySettings) -> some View {
-        WidgetProviderCell(
-            limits: limits,
-            showsReset: showsReset,
-            showsProgressBar: display.showsProgressBar(for: limits.provider)
-        )
+    private func cell(_ limits: ProviderLimits, showsReset: Bool) -> some View {
+        WidgetProviderCell(limits: limits, showsReset: showsReset)
     }
 
     private func rowProviders(_ providers: [ProviderLimits], row: Int) -> [ProviderLimits] {
@@ -144,13 +140,12 @@ private struct WidgetProviderCell: View {
 
     let limits: ProviderLimits
     let showsReset: Bool
-    let showsProgressBar: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             header
             if limits.status == .ok {
-                ForEach(Array(limits.orderedWindows.prefix(2)), id: \.name) { item in
+                ForEach(Array(limits.orderedWindows.prefix(2)), id: \.key) { item in
                     windowBlock(name: item.name, window: item.window)
                 }
             } else if let error = limits.error {
@@ -199,7 +194,7 @@ private struct WidgetProviderCell: View {
                         .lineLimit(1)
                 }
             }
-            LimitBar(remainingPercent: window.remainingPercent, height: 8, showsTrack: showsProgressBar)
+            LimitBar(remainingPercent: window.remainingPercent, height: 8)
         }
     }
 }

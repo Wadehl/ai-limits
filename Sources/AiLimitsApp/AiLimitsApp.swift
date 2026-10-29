@@ -29,29 +29,30 @@ struct AiLimitsApp: App {
         MenuBarExtra {
             PanelView(model: model, display: display)
         } label: {
-            MenuBarLabel(model: model)
+            MenuBarLabel(model: model, display: display)
         }
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(display: display)
+            SettingsView(display: display, model: model)
         }
     }
 }
 
 private struct MenuBarLabel: View {
     @ObservedObject var model: LimitsViewModel
+    @ObservedObject var display: DisplaySettingsStore
 
     var body: some View {
         HStack(spacing: 4) {
-            if let summary = model.menuBarSummary {
+            if let summary = model.menuBarSummary(using: display.settings) {
                 Image(nsImage: ProviderIconAssets.menuBarImage(for: summary.provider, pointSize: 12))
                     .renderingMode(.template)
                     .frame(width: 12, height: 12)
                     .accessibilityHidden(true)
             }
-            Text(model.menuBarText)
+            Text(model.menuBarText(using: display.settings))
         }
-        .accessibilityLabel(model.menuBarText)
+        .accessibilityLabel(model.menuBarText(using: display.settings))
     }
 }

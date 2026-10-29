@@ -47,6 +47,27 @@ struct MenuBarSummaryTests {
         #expect([makeProvider(.claude)].menuBarSummaries().isEmpty)
     }
 
+    @Test("关掉的账号与额度窗口不参与轮换")
+    func skipsHidden() {
+        var settings = DisplaySettings()
+        settings.setVisible(false, for: .codex)
+        let providers = [
+            makeProvider(.claude, session: 97, weekly: 60),
+            makeProvider(.codex, session: 20)
+        ]
+        #expect(providers.menuBarSummaries(using: settings) == [
+            MenuBarSummary(provider: .claude, remainingPercent: 40)
+        ])
+
+        settings.setWindowVisible(false, key: LimitWindowKey.session, for: .claude)
+        #expect(providers.menuBarSummaries(using: settings) == [
+            MenuBarSummary(provider: .claude, remainingPercent: 40)
+        ])
+
+        settings.setWindowVisible(false, key: LimitWindowKey.weekly, for: .claude)
+        #expect(providers.menuBarSummaries(using: settings).isEmpty)
+    }
+
     private func makeProvider(
         _ provider: ProviderIdentifier,
         session: Double? = nil,

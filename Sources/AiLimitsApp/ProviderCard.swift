@@ -4,7 +4,6 @@ import AiLimitsUI
 
 struct ProviderCard: View {
     let limits: ProviderLimits
-    var showsProgressBar = true
 
     @State private var hovered = false
 
@@ -12,13 +11,8 @@ struct ProviderCard: View {
         VStack(alignment: .leading, spacing: 10) {
             header
             if limits.status == .ok {
-                ForEach(limits.orderedWindows, id: \.name) { item in
+                ForEach(limits.orderedWindows, id: \.key) { item in
                     windowRow(name: item.name, window: item.window)
-                }
-                if limits.orderedWindows.isEmpty {
-                    Text("这个账号没有可展示的额度窗口")
-                        .font(AnimalFont.body(12))
-                        .foregroundStyle(AnimalPalette.textMuted)
                 }
             } else if let message = limits.error {
                 Text(message)
@@ -71,7 +65,7 @@ struct ProviderCard: View {
                         .foregroundStyle(AnimalPalette.textDisabled)
                 }
             }
-            LimitBar(remainingPercent: window.remainingPercent, showsTrack: showsProgressBar)
+            LimitBar(remainingPercent: window.remainingPercent)
         }
     }
 }

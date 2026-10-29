@@ -4,17 +4,36 @@ import AiLimitsUI
 
 struct SettingsView: View {
     @ObservedObject var display: DisplaySettingsStore
+    @ObservedObject var model: LimitsViewModel
     @StateObject private var launch = LaunchAtLogin()
 
+    /// README 图片离屏渲染时按内容自然展开，不受滚动区域限制
+    var isPreview = false
+
+    /// 账号与额度都列出来之后可能比屏幕还高，超出后滚动
+    private let maxHeight: CGFloat = 620
+
     var body: some View {
+        if isPreview {
+            content
+        } else {
+            ScrollView {
+                content
+            }
+            .frame(width: 380, height: maxHeight)
+            .scrollIndicators(.never)
+        }
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 16) {
             RibbonTitle(text: "设置")
                 .padding(.leading, 8)
 
             startupCard
-            progressBarCard
+            visibilityCard
 
-            Text("进度条设置同时作用于菜单栏面板与桌面小组件。")
+            Text("这里的开关同时作用于菜单栏面板、桌面小组件与菜单栏上轮换的额度。")
                 .font(AnimalFont.body(11))
                 .foregroundStyle(AnimalPalette.textMuted)
                 .fixedSize(horizontal: false, vertical: true)
@@ -63,32 +82,52 @@ struct SettingsView: View {
         .clipShape(RoundedRectangle(cornerRadius: AnimalRadius.card, style: .continuous))
     }
 
-    private var progressBarCard: some View {
+    private var visibilityCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("进度条")
+            Text("显示的额度")
                 .font(AnimalFont.heading(14))
                 .foregroundStyle(AnimalPalette.textTitle)
 
-            Text("关掉某个账号之后，它的额度只保留右侧的剩余百分比。")
+            Text("关掉整个账号，或者只关掉其中某一份额度，关掉的部分不再展示。")
                 .font(AnimalFont.body(11))
                 .foregroundStyle(AnimalPalette.textMuted)
                 .fixedSize(horizontal: false, vertical: true)
 
             ForEach(ProviderIdentifier.allCases, id: \.self) { provider in
-                HStack(spacing: 8) {
-                    ProviderIcon(provider: provider, color: AnimalPalette.textTitle)
-                        .frame(width: 16, height: 16)
-                    Text(provider.displayName)
-                        .font(AnimalFont.body(13))
-                        .foregroundStyle(AnimalPalette.textBody)
-                    Spacer(minLength: 0)
-                    Toggle("显示 \(provider.displayName) 的进度条", isOn: progressBarBinding(for: provider))
-                        .labelsHidden()
-                        .toggleStyle(.switch)
-                        .controlSize(.small)
-                        .tint(AnimalPalette.primary)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
+                        ProviderIcon(provider: provider, color: AnimalPalette.textTitle)
+                            .frame(width: 16, height: 16)
+                        Text(provider.displayName)
+                            .font(AnimalFont.body(13))
+                            .foregroundStyle(AnimalPalette.textBody)
+                        Spacer(minLength: 0)
+                        Toggle("显示 \(provider.displayName)", isOn: providerBinding(for: provider))
+                            .labelsHidden()
+                            .toggleStyle(.switch)
+                            .controlSize(.small)
+                            .tint(AnimalPalette.primary)
+                    }
+                    .frame(height: 26)
+
+                    ForEach(windows(of: provider), id: \.key) { item in
+                        HStack(spacing: 8) {
+                            Text(item.name)
+                                .font(AnimalFont.body(12))
+                                .foregroundStyle(AnimalPalette.textMuted)
+                                .lineLimit(1)
+                            Spacer(minLength: 0)
+                            Toggle("显示 \(provider.displayName) 的 \(item.name)", isOn: windowBinding(for: provider, key: item.key))
+                                .labelsHidden()
+                                .toggleStyle(.switch)
+                                .controlSize(.mini)
+                                .tint(AnimalPalette.primary)
+                                .disabled(!display.isVisible(provider))
+                        }
+                        .padding(.leading, 24)
+                        .frame(height: 22)
+                    }
                 }
-                .frame(height: 26)
             }
         }
         .padding(16)
@@ -97,10 +136,22 @@ struct SettingsView: View {
         .clipShape(RoundedRectangle(cornerRadius: AnimalRadius.card, style: .continuous))
     }
 
-    private func progressBarBinding(for provider: ProviderIdentifier) -> Binding<Bool> {
+    /// 当前已经读到的额度窗口；还没读到数据的账号只显示账号开关
+    private func windows(of provider: ProviderIdentifier) -> [LimitWindowEntry] {
+        model.providers.first { $0.provider == provider }?.orderedWindows ?? []
+    }
+
+    private func providerBinding(for provider: ProviderIdentifier) -> Binding<Bool> {
         Binding(
-            get: { display.showsProgressBar(for: provider) },
-            set: { display.setShowsProgressBar($0, for: provider) }
+            get: { display.isVisible(provider) },
+            set: { display.setVisible($0, for: provider) }
+        )
+    }
+
+    private func windowBinding(for provider: ProviderIdentifier, key: String) -> Binding<Bool> {
+        Binding(
+            get: { display.isWindowVisible(key, for: provider) },
+            set: { display.setWindowVisible($0, key: key, for: provider) }
         )
     }
 }

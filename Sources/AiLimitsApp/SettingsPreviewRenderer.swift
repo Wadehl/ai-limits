@@ -17,7 +17,7 @@ enum SettingsPreviewRenderer {
         let output = URL(fileURLWithPath: arguments[flag + 1])
 
         let display = DisplaySettingsStore(settings: DisplaySettings())
-        let content = SettingsView(display: display)
+        let content = SettingsView(display: display, model: LimitsViewModel(sample: .sample), isPreview: true)
         let renderer = ImageRenderer(content: content)
         renderer.scale = 2
         guard let image = renderer.nsImage,

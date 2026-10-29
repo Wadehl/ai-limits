@@ -12,11 +12,11 @@ public struct MenuBarSummary: Sendable, Equatable {
 }
 
 public extension Array where Element == ProviderLimits {
-    /// 每个账号各取自己剩余最多的窗口，按账号的展示顺序排列；菜单栏轮流展示这几份
-    func menuBarSummaries() -> [MenuBarSummary] {
+    /// 每个账号各取自己被关掉之外剩余最多的窗口，按账号的展示顺序排列；菜单栏轮流展示这几份
+    func menuBarSummaries(using settings: DisplaySettings = DisplaySettings()) -> [MenuBarSummary] {
         compactMap { limits in
             guard limits.status == .ok else { return nil }
-            let best = limits.orderedWindows.map(\.window.remainingPercent).max()
+            let best = settings.visibleWindows(of: limits).map(\.window.remainingPercent).max()
             guard let best else { return nil }
             return MenuBarSummary(provider: limits.provider, remainingPercent: best)
         }

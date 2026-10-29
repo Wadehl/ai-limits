@@ -8,28 +8,21 @@ public struct LimitBar: View {
     /// 剩余可用百分比，填充长度与右侧数字都按它计算
     public let remainingPercent: Double
     public var height: CGFloat
-    /// 关掉之后只保留右侧百分比
-    public var showsTrack: Bool
 
-    public init(remainingPercent: Double, height: CGFloat = 14, showsTrack: Bool = true) {
+    public init(remainingPercent: Double, height: CGFloat = 14) {
         self.remainingPercent = remainingPercent
         self.height = height
-        self.showsTrack = showsTrack
     }
 
     public var body: some View {
         HStack(spacing: 10) {
-            if showsTrack {
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        track
-                        fill(width: geometry.size.width * remainingPercent / 100)
-                    }
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    track
+                    fill(width: geometry.size.width * remainingPercent / 100)
                 }
-                .frame(height: height)
-            } else {
-                Spacer(minLength: 0)
             }
+            .frame(height: height)
 
             Text("剩余 \(Int(remainingPercent.rounded()))%")
                 .font(AnimalFont.emphasis(12))

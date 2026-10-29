@@ -76,4 +76,29 @@ struct WidgetLayoutTests {
         )
         #expect(WidgetLayout.visible(snapshot, family: .systemSmall).count == 1)
     }
+
+    @Test("设置里关掉的账号不占格子")
+    func hiddenProviderExcluded() {
+        var settings = DisplaySettings()
+        settings.setVisible(false, for: .codex)
+        #expect(WidgetLayout.ranked(.sample, using: settings).map(\.provider) == [.cursor, .claude, .grok])
+        #expect(WidgetLayout.visible(.sample, family: .systemLarge, using: settings).count == 3)
+    }
+
+    @Test("设置里关掉的额度窗口不进入格子")
+    func hiddenWindowExcluded() {
+        var settings = DisplaySettings()
+        settings.setWindowVisible(false, key: "GrokBot · 7 天", for: .grok)
+        let grok = WidgetLayout.ranked(.sample, using: settings).first { $0.provider == .grok }
+        #expect(grok?.orderedWindows.map(\.key) == ["GrokBuild · 7 天"])
+    }
+
+    @Test("额度全部关掉的账号不占格子")
+    func providerWithoutVisibleWindowsExcluded() {
+        var settings = DisplaySettings()
+        for window in WidgetLayout.ranked(.sample).first(where: { $0.provider == .grok })?.orderedWindows ?? [] {
+            settings.setWindowVisible(false, key: window.key, for: .grok)
+        }
+        #expect(WidgetLayout.ranked(.sample, using: settings).map(\.provider) == [.codex, .cursor, .claude])
+    }
 }
