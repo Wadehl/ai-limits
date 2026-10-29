@@ -2,16 +2,21 @@
 
 本文件记录狸记额度（Linook，旧名 AiLimits）每个版本的变化，格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [未发布]
+## [0.3.0] - 2026-10-29
 
 ### 新增
 
+- 菜单栏常驻项改为显示所有账号、所有窗口里剩余百分比最高的一份额度，并在前面显示对应账号的图标。
+- 设置窗口：面板底部增加「设置」，可以开关开机自动启动，也可以按账号关掉进度条；设置通过应用组共享给桌面小组件，修改后立即重画。
+- Claude、Codex、Cursor、Grok 卡片与小组件格子增加账号图标，取自 LobeHub 图标库。
+- 设置页面用样例数据离屏渲染成 README 图片。
 - GitHub Actions：PR 与 main 分支自动测试并做临时签名构建；推送 `v*` 标签时生成 `.zip`、`.dmg` 并发布到 GitHub Releases。
 - `scripts/build-release.sh`：不需要 Apple 开发者账号的临时签名构建，产物放到 `dist/`。
 - README 增加安装、首次打开放行与桌面小组件的设置步骤。
 
 ### 变更
 
+- 关掉某个账号的进度条之后，该账号的额度仍保留右侧的剩余百分比。
 - 产品改名为「狸记额度」（英文名 Linook）：应用包改为 `Linook.app`，系统里显示为「狸记额度」，发布包改为 `Linook-<版本>-macOS.dmg/.zip`，dmg 卷名为 Linook。小组件名称「Agent 额度」不变。
 - 为了兼容已安装的版本与小组件登记，bundle id（`com.kevinkwok.AiLimits*`）、应用组标识与快照目录 `~/Library/Application Support/AiLimits/` 保持不变。从 AiLimits 升级时，需要先删掉旧的 `AiLimits.app`。
 - 小组件的共享位置可在构建时选择：默认仍走应用组；临时签名构建改用 `~/Library/Application Support/AiLimits/`，因为 macOS 15 起临时签名的小组件扩展无法访问应用组。

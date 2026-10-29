@@ -11,5 +11,6 @@ BIN_PATH="$(swift build -c "$CONFIGURATION" --show-bin-path)"
 
 # AnimalFont 从 Bundle.main 找字体，命令行工具的主目录就是可执行文件所在目录
 cp "$ROOT/Resources/Nunito.ttf" "$BIN_PATH/Nunito.ttf"
+cp -R "$ROOT/Resources/ProviderIcons" "$BIN_PATH/ProviderIcons"
 
 "$BIN_PATH/AiLimitsWidgetPreview" "$OUTPUT"

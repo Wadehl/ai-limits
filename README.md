@@ -19,11 +19,17 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
 
 <img src="docs/images/widget-large.png" width="364" alt="四格小组件">
 
+设置页面：
+
+<img src="docs/images/settings.png" width="380" alt="设置页面">
+
 图片由样例数据离屏渲染，不含真实账号信息。
 
 ## 功能
 
 - **菜单栏面板**：点开菜单栏图标是一个下拉面板，每种账号各占一张卡片，列出 5 小时、7 天、月度等各个额度的剩余百分比、重置时间与套餐类型。进度条与数字都是剩余量，数字前标注「剩余」。
+- **菜单栏常驻项**：在所有账号、所有窗口里显示剩余百分比最高的一份额度，前面配上它所属账号的图标，一眼看到还宽裕的额度。
+- **设置**：面板底部的「设置」打开设置窗口，可以开关开机自动启动，也可以按账号关掉进度条；关掉之后只保留右侧的剩余百分比，菜单栏面板与桌面小组件同时生效。
 - **桌面小组件**：支持单格、双格、四格三种尺寸，按消耗最高的账号排在前面。开启系统里的「调暗桌面小组件」之后内容照常显示。
 - **自动刷新**：启动时先显示已有的成功快照，再读取实时额度。正常情况下每 5 分钟刷新；读取失败后每 30 秒再试。短暂断网或服务端故障会在同一次读取中重试，最多请求 3 次。
 
@@ -190,6 +196,7 @@ swift test
 - 额度信息的获取方式参考 [orca](https://github.com/stablyai/orca)
 - 界面设计取自 [animal-island-ui-style](https://github.com/guokaigdg/animal-island-ui-style)
 - 界面风格参考 [animal-island-ui](https://github.com/guokaigdg/animal-island-ui)（MIT License）
+- 账号图标取自 [LobeHub 图标库](https://github.com/lobehub/lobe-icons)，按 MIT 许可证使用，许可证见 `Resources/ProviderIcons/LobeHub-LICENSE.txt`
 - 界面字体是 [Nunito](https://fonts.google.com/specimen/Nunito)，按 SIL Open Font License 1.1 使用，许可证见 `Resources/Nunito-OFL.txt`
 
 ## 许可证

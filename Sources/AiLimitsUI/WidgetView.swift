@@ -12,10 +12,12 @@ public enum WidgetData: Sendable {
 public struct LimitsEntry: TimelineEntry {
     public let date: Date
     public let data: WidgetData
+    public let display: DisplaySettings
 
-    public init(date: Date, data: WidgetData) {
+    public init(date: Date, data: WidgetData, display: DisplaySettings = DisplaySettings()) {
         self.date = date
         self.data = data
+        self.display = display
     }
 }
 
@@ -68,28 +70,28 @@ public struct WidgetLayoutView: View {
                         .font(AnimalFont.body(10))
                         .foregroundStyle(ink.muted)
                 }
-                grid(providers)
+                grid(providers, display: entry.display)
             }
         } else {
-            grid(providers)
+            grid(providers, display: entry.display)
         }
     }
 
     @ViewBuilder
-    private func grid(_ providers: [ProviderLimits]) -> some View {
+    private func grid(_ providers: [ProviderLimits], display: DisplaySettings) -> some View {
         switch family {
         case .systemSmall:
-            cell(providers[0], showsReset: true)
+            cell(providers[0], showsReset: true, display: display)
         case .systemMedium:
             HStack(spacing: 10) {
-                ForEach(providers, id: \.provider) { cell($0, showsReset: false) }
+                ForEach(providers, id: \.provider) { cell($0, showsReset: false, display: display) }
                 if providers.count < 2 { Color.clear }
             }
         default:
             VStack(spacing: 10) {
                 ForEach(0..<2, id: \.self) { row in
                     HStack(spacing: 10) {
-                        ForEach(rowProviders(providers, row: row), id: \.provider) { cell($0, showsReset: true) }
+                        ForEach(rowProviders(providers, row: row), id: \.provider) { cell($0, showsReset: true, display: display) }
                         if rowProviders(providers, row: row).count < 2 { Color.clear }
                     }
                 }
@@ -97,8 +99,12 @@ public struct WidgetLayoutView: View {
         }
     }
 
-    private func cell(_ limits: ProviderLimits, showsReset: Bool) -> some View {
-        WidgetProviderCell(limits: limits, showsReset: showsReset)
+    private func cell(_ limits: ProviderLimits, showsReset: Bool, display: DisplaySettings) -> some View {
+        WidgetProviderCell(
+            limits: limits,
+            showsReset: showsReset,
+            showsProgressBar: display.showsProgressBar(for: limits.provider)
+        )
     }
 
     private func rowProviders(_ providers: [ProviderLimits], row: Int) -> [ProviderLimits] {
@@ -138,6 +144,7 @@ private struct WidgetProviderCell: View {
 
     let limits: ProviderLimits
     let showsReset: Bool
+    let showsProgressBar: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
@@ -163,6 +170,8 @@ private struct WidgetProviderCell: View {
 
     private var header: some View {
         HStack(spacing: 6) {
+            ProviderIcon(provider: limits.provider, color: ink.title)
+                .frame(width: 14, height: 14)
             Text(limits.provider.displayName)
                 .font(AnimalFont.heading(14))
                 .foregroundStyle(ink.title)
@@ -190,7 +199,7 @@ private struct WidgetProviderCell: View {
                         .lineLimit(1)
                 }
             }
-            LimitBar(remainingPercent: window.remainingPercent, height: 8)
+            LimitBar(remainingPercent: window.remainingPercent, height: 8, showsTrack: showsProgressBar)
         }
     }
 }

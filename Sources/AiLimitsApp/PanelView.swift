@@ -4,9 +4,12 @@ import AiLimitsUI
 
 struct PanelView: View {
     @ObservedObject var model: LimitsViewModel
+    @ObservedObject var display: DisplaySettingsStore
 
     /// README 图片离屏渲染时去掉滚动区域，让面板按内容自然展开
     var isPreview = false
+
+    @Environment(\.openSettings) private var openSettings
 
     /// 列表最高高度，超出后由 ScrollView 滚动
     private let maxListHeight: CGFloat = 430
@@ -50,6 +53,11 @@ struct PanelView: View {
                 }
                 .disabled(model.isRefreshing)
 
+                AnimalButton(title: "设置", kind: .plain) {
+                    NSApplication.shared.activate(ignoringOtherApps: true)
+                    openSettings()
+                }
+
                 AnimalButton(title: "退出", kind: .plain) {
                     NSApplication.shared.terminate(nil)
                 }
@@ -66,7 +74,10 @@ struct PanelView: View {
     private var cardList: some View {
         VStack(spacing: 12) {
             ForEach(model.visibleProviders, id: \.provider) { limits in
-                ProviderCard(limits: limits)
+                ProviderCard(
+                    limits: limits,
+                    showsProgressBar: display.showsProgressBar(for: limits.provider)
+                )
             }
             if model.visibleProviders.isEmpty {
                 Text(model.fetchedAt == nil ? "正在读取本机额度…" : "本机没有检测到已登录的 Agent")

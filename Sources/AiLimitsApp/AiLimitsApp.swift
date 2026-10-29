@@ -12,6 +12,10 @@ enum AiLimitsMain {
             MainActor.assumeIsolated { PanelPreviewRenderer.run() }
             exit(0)
         }
+        if CommandLine.arguments.contains("--render-settings") {
+            MainActor.assumeIsolated { SettingsPreviewRenderer.run() }
+            exit(0)
+        }
         AnimalFont.register()
         AiLimitsApp.main()
     }
@@ -19,16 +23,32 @@ enum AiLimitsMain {
 
 struct AiLimitsApp: App {
     @StateObject private var model = LimitsViewModel()
+    @StateObject private var display = DisplaySettingsStore()
 
     var body: some Scene {
         MenuBarExtra {
-            PanelView(model: model)
+            PanelView(model: model, display: display)
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: "gauge.with.dots.needle.50percent")
-                Text(model.menuBarText)
-            }
+            MenuBarLabel(model: model)
         }
         .menuBarExtraStyle(.window)
+
+        Settings {
+            SettingsView(display: display)
+        }
+    }
+}
+
+private struct MenuBarLabel: View {
+    @ObservedObject var model: LimitsViewModel
+
+    var body: some View {
+        HStack(spacing: 5) {
+            if let summary = model.menuBarSummary {
+                ProviderIcon(provider: summary.provider, color: .primary)
+                    .frame(width: 13, height: 13)
+            }
+            Text(model.menuBarText)
+        }
     }
 }

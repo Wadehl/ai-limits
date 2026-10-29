@@ -49,17 +49,14 @@ final class LimitsViewModel: ObservableObject {
         providers.filter { $0.status != .unavailable }
     }
 
-    /// 所有窗口里剩余最少的百分比，菜单栏显示它，方便一眼看出哪个账号快用完了
-    var lowestRemainingPercent: Double? {
-        providers
-            .filter { $0.status == .ok }
-            .flatMap { $0.orderedWindows.map(\.window.remainingPercent) }
-            .min()
+    /// 所有窗口里剩余最多的百分比，菜单栏连同对应账号的图标一起展示
+    var menuBarSummary: MenuBarSummary? {
+        providers.highestRemainingSummary()
     }
 
     var menuBarText: String {
-        guard let remaining = lowestRemainingPercent else { return "额度" }
-        return "剩余 \(Int(remaining.rounded()))%"
+        guard let summary = menuBarSummary else { return "额度" }
+        return "剩余 \(Int(summary.remainingPercent.rounded()))%"
     }
 
     var updatedText: String {

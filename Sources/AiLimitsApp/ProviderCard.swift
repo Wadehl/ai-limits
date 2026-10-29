@@ -4,6 +4,7 @@ import AiLimitsUI
 
 struct ProviderCard: View {
     let limits: ProviderLimits
+    var showsProgressBar = true
 
     @State private var hovered = false
 
@@ -38,6 +39,8 @@ struct ProviderCard: View {
 
     private var header: some View {
         HStack(spacing: 8) {
+            ProviderIcon(provider: limits.provider, color: AnimalPalette.textTitle)
+                .frame(width: 16, height: 16)
             Text(limits.provider.displayName)
                 .font(AnimalFont.heading(15))
                 .foregroundStyle(AnimalPalette.textTitle)
@@ -68,7 +71,7 @@ struct ProviderCard: View {
                         .foregroundStyle(AnimalPalette.textDisabled)
                 }
             }
-            LimitBar(remainingPercent: window.remainingPercent)
+            LimitBar(remainingPercent: window.remainingPercent, showsTrack: showsProgressBar)
         }
     }
 }

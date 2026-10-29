@@ -6,3 +6,4 @@ logs/
 .swiftpm/
 AiLimits.xcodeproj/
 Build/
+work/

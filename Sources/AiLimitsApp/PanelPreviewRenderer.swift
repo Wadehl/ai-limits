@@ -16,8 +16,19 @@ enum PanelPreviewRenderer {
         }
         let output = URL(fileURLWithPath: arguments[flag + 1])
 
+        var settings = DisplaySettings()
+        if let hideFlag = arguments.firstIndex(of: "--hide-bars"), arguments.count > hideFlag + 1 {
+            for rawValue in arguments[hideFlag + 1].split(separator: ",") {
+                guard let provider = ProviderIdentifier(rawValue: String(rawValue)) else {
+                    fatalError("--hide-bars 里有不认识的账号 \(rawValue)")
+                }
+                settings.setShowsProgressBar(false, for: provider)
+            }
+        }
+
         let model = LimitsViewModel(sample: .sample)
-        let content = PanelView(model: model, isPreview: true)
+        let display = DisplaySettingsStore(settings: settings)
+        let content = PanelView(model: model, display: display, isPreview: true)
         let renderer = ImageRenderer(content: content)
         renderer.scale = 2
         guard let image = renderer.nsImage,

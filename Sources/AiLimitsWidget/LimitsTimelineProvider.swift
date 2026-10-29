@@ -16,13 +16,19 @@ struct LimitsTimelineProvider: TimelineProvider {
     }
 
     private func current() -> LimitsEntry {
+        let display: DisplaySettings
+        do {
+            display = try DisplaySettings.load()
+        } catch {
+            return LimitsEntry(date: Date(), data: .failed("显示设置无法读取"), display: DisplaySettings())
+        }
         do {
             guard let snapshot = try SnapshotStore.read() else {
-                return LimitsEntry(date: Date(), data: .empty)
+                return LimitsEntry(date: Date(), data: .empty, display: display)
             }
-            return LimitsEntry(date: Date(), data: .ready(snapshot))
+            return LimitsEntry(date: Date(), data: .ready(snapshot), display: display)
         } catch {
-            return LimitsEntry(date: Date(), data: .failed("额度数据无法读取"))
+            return LimitsEntry(date: Date(), data: .failed("额度数据无法读取"), display: display)
         }
     }
 }
