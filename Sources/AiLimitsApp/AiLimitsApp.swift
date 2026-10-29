@@ -46,9 +46,9 @@ private struct MenuBarLabel: View {
     var body: some View {
         HStack(spacing: 4) {
             if let summary = model.menuBarSummary(using: display.settings) {
-                Image(nsImage: ProviderIconAssets.menuBarImage(for: summary.provider, pointSize: 12))
+                Image(nsImage: ProviderIconAssets.menuBarImage(for: summary.provider, pointSize: 14))
                     .renderingMode(.template)
-                    .frame(width: 12, height: 12)
+                    .frame(width: 14, height: 14)
                     .accessibilityHidden(true)
             }
             Text(model.menuBarText(using: display.settings))
