@@ -43,12 +43,15 @@ private struct MenuBarLabel: View {
     @ObservedObject var model: LimitsViewModel
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 4) {
             if let summary = model.menuBarSummary {
-                ProviderIcon(provider: summary.provider, color: .primary)
-                    .frame(width: 13, height: 13)
+                Image(nsImage: ProviderIconAssets.menuBarImage(for: summary.provider, pointSize: 10))
+                    .renderingMode(.template)
+                    .frame(width: 10, height: 10)
+                    .accessibilityHidden(true)
             }
             Text(model.menuBarText)
         }
+        .accessibilityLabel(model.menuBarText)
     }
 }
