@@ -4,47 +4,47 @@ import Testing
 
 @Suite("菜单栏额度")
 struct MenuBarSummaryTests {
-    @Test("取所有窗口里剩余最高的一个")
-    func highestWindowWins() {
+    @Test("每个账号取自己剩余最多的窗口")
+    func picksBestWindowPerProvider() {
         let providers = [
             makeProvider(.claude, session: 97, weekly: 60),
             makeProvider(.cursor, monthly: 92)
         ]
-        #expect(providers.highestRemainingSummary() == MenuBarSummary(provider: .claude, remainingPercent: 40))
+        #expect(providers.menuBarSummaries() == [
+            MenuBarSummary(provider: .claude, remainingPercent: 40),
+            MenuBarSummary(provider: .cursor, remainingPercent: 8)
+        ])
     }
 
-    @Test("跨账号比较剩余百分比")
-    func comparesAcrossProviders() {
+    @Test("按账号的展示顺序返回")
+    func keepsProviderOrder() {
         let providers = [
-            makeProvider(.claude, session: 95, weekly: 90),
-            makeProvider(.codex, session: 20, weekly: 4)
+            makeProvider(.codex, session: 20, weekly: 4),
+            makeProvider(.claude, session: 50)
         ]
-        #expect(providers.highestRemainingSummary() == MenuBarSummary(provider: .codex, remainingPercent: 96))
+        #expect(providers.menuBarSummaries() == [
+            MenuBarSummary(provider: .codex, remainingPercent: 96),
+            MenuBarSummary(provider: .claude, remainingPercent: 50)
+        ])
     }
 
-    @Test("并列时沿用账号顺序")
-    func keepsEarliestOnTie() {
-        let providers = [
-            makeProvider(.claude, session: 50),
-            makeProvider(.grok, session: 50)
-        ]
-        #expect(providers.highestRemainingSummary() == MenuBarSummary(provider: .claude, remainingPercent: 50))
-    }
-
-    @Test("读取失败与没有凭据的账号不参与比较")
+    @Test("读取失败与没有凭据的账号不参与轮播")
     func skipsUnavailableProviders() {
         let providers = [
             makeProvider(.claude, session: 10, status: .error),
             makeProvider(.codex, session: 80, status: .unavailable),
             makeProvider(.grok, session: 30)
         ]
-        #expect(providers.highestRemainingSummary() == MenuBarSummary(provider: .grok, remainingPercent: 70))
+        #expect(providers.menuBarSummaries() == [
+            MenuBarSummary(provider: .grok, remainingPercent: 70)
+        ])
     }
 
     @Test("没有可展示的窗口时返回空")
     func emptyWithoutWindows() {
-        #expect([ProviderLimits]().highestRemainingSummary() == nil)
-        #expect([makeProvider(.claude, status: .unavailable)].highestRemainingSummary() == nil)
+        #expect([ProviderLimits]().menuBarSummaries().isEmpty)
+        #expect([makeProvider(.claude, status: .unavailable)].menuBarSummaries().isEmpty)
+        #expect([makeProvider(.claude)].menuBarSummaries().isEmpty)
     }
 
     private func makeProvider(

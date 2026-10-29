@@ -1,6 +1,6 @@
 import Foundation
 
-/// 菜单栏上展示的那一份额度：所有账号、所有窗口里剩余百分比最高的一个
+/// 菜单栏上展示的那一份额度：某个账号里剩余百分比最高的窗口
 public struct MenuBarSummary: Sendable, Equatable {
     public let provider: ProviderIdentifier
     public let remainingPercent: Double
@@ -12,17 +12,13 @@ public struct MenuBarSummary: Sendable, Equatable {
 }
 
 public extension Array where Element == ProviderLimits {
-    /// 取剩余百分比最高的窗口；并列时沿用账号与窗口的展示顺序
-    func highestRemainingSummary() -> MenuBarSummary? {
-        var best: MenuBarSummary?
-        for limits in self where limits.status == .ok {
-            for item in limits.orderedWindows {
-                let candidate = MenuBarSummary(provider: limits.provider, remainingPercent: item.window.remainingPercent)
-                if best.map({ candidate.remainingPercent > $0.remainingPercent }) ?? true {
-                    best = candidate
-                }
-            }
+    /// 每个账号各取自己剩余最多的窗口，按账号的展示顺序排列；菜单栏轮流展示这几份
+    func menuBarSummaries() -> [MenuBarSummary] {
+        compactMap { limits in
+            guard limits.status == .ok else { return nil }
+            let best = limits.orderedWindows.map(\.window.remainingPercent).max()
+            guard let best else { return nil }
+            return MenuBarSummary(provider: limits.provider, remainingPercent: best)
         }
-        return best
     }
 }

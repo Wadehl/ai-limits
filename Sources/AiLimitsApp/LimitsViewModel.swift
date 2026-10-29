@@ -9,10 +9,14 @@ final class LimitsViewModel: ObservableObject {
     @Published private(set) var isRefreshing = false
     @Published private(set) var fetchedAt: Date?
     @Published private(set) var cacheError: String?
+    /// 菜单栏当前展示第几个账号，每 6 秒往后走一个
+    @Published private(set) var menuBarIndex = 0
 
     private let service = LimitsService()
     private let refreshInterval = Duration.seconds(300)
+    private let menuBarInterval = Duration.seconds(6)
     private var loop: Task<Void, Never>?
+    private var rotation: Task<Void, Never>?
     private let isSample: Bool
 
     init() {
@@ -31,6 +35,12 @@ final class LimitsViewModel: ObservableObject {
                 do { try await Task.sleep(for: delay) } catch { break }
             }
         }
+        rotation = Task { [weak self] in
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: self?.menuBarInterval ?? .seconds(6)) } catch { break }
+                self?.advanceMenuBar()
+            }
+        }
     }
 
     /// 渲染 README 图片时使用，不读取本机数据，也不启动刷新
@@ -42,6 +52,7 @@ final class LimitsViewModel: ObservableObject {
 
     deinit {
         loop?.cancel()
+        rotation?.cancel()
     }
 
     /// 本机没有登录凭据的 Agent 不进入列表
@@ -49,9 +60,16 @@ final class LimitsViewModel: ObservableObject {
         providers.filter { $0.status != .unavailable }
     }
 
-    /// 所有窗口里剩余最多的百分比，菜单栏连同对应账号的图标一起展示
+    /// 菜单栏轮流展示每个账号里剩余最多的那份额度，图标与数字来自同一个账号
     var menuBarSummary: MenuBarSummary? {
-        providers.highestRemainingSummary()
+        let summaries = providers.menuBarSummaries()
+        guard !summaries.isEmpty else { return nil }
+        return summaries[menuBarIndex % summaries.count]
+    }
+
+    private func advanceMenuBar() {
+        guard providers.menuBarSummaries().count > 1 else { return }
+        menuBarIndex += 1
     }
 
     var menuBarText: String {
