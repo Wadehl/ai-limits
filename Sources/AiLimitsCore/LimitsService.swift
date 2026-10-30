@@ -26,10 +26,12 @@ public struct LimitsService: Sendable {
 
     /// 同时读取本机各个 Agent 的额度，单个工具失败只影响它自己的那一条
     public func fetchAll() async -> RateLimitSnapshot {
+        // Grok Bot 的缓存按账号分开存放，Cursor 登录的账号由 Cursor 卡片自己展示
+        let cursorAccounts = CursorCredentials().accountIdentifiers()
         async let claude = result(of: ClaudeLimitsProvider())
         async let codex = result(of: CodexLimitsProvider())
         async let cursor = result(of: CursorLimitsProvider())
-        async let grok = result(of: GrokLimitsProvider())
+        async let grok = result(of: GrokLimitsProvider(excludingGrokBotAccounts: cursorAccounts))
         let providers = await [claude, codex, cursor, grok]
         return RateLimitSnapshot(providers: providers, fetchedAt: Date())
     }

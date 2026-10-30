@@ -8,17 +8,26 @@ public struct GrokLimitsProvider: Sendable {
     private let homeOverride: URL?
     private let urlSession: URLSession
     private let grokBotUsage: GrokBotUsageStore
+    /// 属于其他账号的 Grok Bot 缓存，例如 Cursor 自己那份 GrokBot 额度
+    private let excludedGrokBotAccounts: Set<String>
 
-    public init() {
+    public init(excludingGrokBotAccounts: Set<String> = []) {
         homeOverride = nil
         urlSession = .shared
         grokBotUsage = GrokBotUsageStore()
+        self.excludedGrokBotAccounts = excludingGrokBotAccounts
     }
 
-    init(home: URL, urlSession: URLSession, grokBotUsage: GrokBotUsageStore = GrokBotUsageStore()) {
+    init(
+        home: URL,
+        urlSession: URLSession,
+        grokBotUsage: GrokBotUsageStore = GrokBotUsageStore(),
+        excludedGrokBotAccounts: Set<String> = []
+    ) {
         homeOverride = home
         self.urlSession = urlSession
         self.grokBotUsage = grokBotUsage
+        self.excludedGrokBotAccounts = excludedGrokBotAccounts
     }
 
     private var grokHome: URL {
@@ -102,9 +111,10 @@ public struct GrokLimitsProvider: Sendable {
         )
     }
 
-    /// Grok Bot 的用量由它自己的桌面应用记在本机缓存里，和 GrokBuild 的账单是两个独立的额度
+    /// Grok Bot 的用量由它自己的桌面应用记在本机缓存里，和 GrokBuild 的账单是两个独立的额度。
+    /// 缓存按 Grok Bot 应用里的账号分开存放，Cursor 的 GrokBot 额度也在同一份缓存里，因此这里排除掉其他账号。
     private func grokBotBuckets() throws -> [RateLimitBucket] {
-        guard let usage = try grokBotUsage.read() else { return [] }
+        guard let usage = try grokBotUsage.latest(excluding: excludedGrokBotAccounts) else { return [] }
         return [
             RateLimitBucket(
                 name: "GrokBot · 7 天",
