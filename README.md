@@ -57,7 +57,7 @@ macOS 菜单栏与桌面小组件，用来看本机各个 Agent 账号的额度�
 
 - 凭据：`$GROK_HOME/auth.json`，默认 `~/.grok/auth.json`
 - 额度接口：`cli-chat-proxy.grok.com/v1/billing`，可用环境变量 `GROK_CLI_CHAT_PROXY_BASE_URL` 换到别的地址
-- GrokBot 是独立于 GrokBuild 的另一份额度，读数来自 Grok Bot 桌面应用写在 `~/Library/Application Support/Grok Bot/sand-client-persistence` 的用量缓存。缓存里的有效期或者重置时间已经过去时不再展示，打开桌面上那个应用就会刷新
+- GrokBot 是独立于 GrokBuild 的另一份额度，读数来自 Grok Bot 桌面应用写在 `~/Library/Application Support/Grok Bot/sand-client-persistence` 的用量缓存。缓存按 Grok Bot 应用里的登录账号分开存放，这里只采用不属于本机 Cursor 登录的账号读数；Cursor 自己那份 GrokBot 额度由 Cursor 卡片展示，Grok Bot 只登录了 Cursor 账号时这一项不显示。缓存里的有效期或者重置时间已经过去时同样不再展示，打开桌面上那个应用就会刷新
 - 自动续期：`auth.x.ai` 签发的令牌即将过期或额度接口返回 401 时，使用本机的 `refresh_token` 静默续期，无需启动 Grok CLI。续期与 CLI 共用 `auth.json.lock`，新凭据以仅当前用户可读写的权限原子写回 `auth.json`。
 - 仅当续期授权被撤销、缺少续期凭据或使用不支持的登录来源时，才需要重新登录。临时网络故障不会被提示成「登录已过期」。
 

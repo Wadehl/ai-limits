@@ -2,6 +2,12 @@
 
 本文件记录狸记额度（Linook，旧名 AiLimits）每个版本的变化，格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.1] - 2026-10-30
+
+### 修复
+
+- Grok 卡片的 GrokBot 额度改用 Grok Bot 应用里属于 Grok 账号的读数。之前它取的是 Grok Bot 缓存里最新的一份，而本机那份属于 Cursor 登录的账号，于是 Grok 卡片展示了 Cursor 的 GrokBot 额度。现在 Cursor 登录的账号从 Grok 卡片的读数里排除，Cursor 卡片继续通过 Cursor 后台展示自己的 GrokBot；Grok Bot 只登录了 Cursor 账号时这一项不显示。
+
 ## [0.3.0] - 2026-10-29
 
 ### 新增
